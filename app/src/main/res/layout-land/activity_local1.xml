@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NameHero"
+                    android:id="@+id/txtNameHero"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:textSize="16sp"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Title"
+                    android:textSize="12sp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:id="@+id/txtTitle"
+                    android:visibility="visible" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="money"
+                        android:id="@+id/txtMoney"
+                        android:textColor="@color/ColorTextForWindow"
+                        android:layout_gravity="center_horizontal"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="gold"
+                        android:id="@+id/txtGold"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/ColorTextForWindow"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <ua.azigar.client.Resources.Progress_hp
+                android:id="@+id/hpHero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@drawable/progress_hp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/ColorTextForWindow"
+                android:layout_margin="3dp" />
+
+            <ua.azigar.client.Resources.Progress_mana
+                android:id="@+id/manaHero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@drawable/progress_mana"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/ColorTextForWindow"
+                android:layout_margin="3dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4">
+
+            <ua.azigar.client.Resources.Progress_exp
+                android:id="@+id/expHero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@drawable/progress_exp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/ColorTextForWindow"
+                android:layout_margin="3dp" />
+
+            <ua.azigar.client.Resources.Progress_pvp
+                android:id="@+id/pvpHero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@drawable/progress_pvp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/ColorTextForWindow"
+                android:layout_margin="3dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="5">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgVIP"
+                android:src="@drawable/vip0"
+                android:layout_gravity="center_vertical"
+                android:scaleType="centerCrop"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imgLocal"
+                android:src="@drawable/local_1"
+                android:scaleType="fitStart"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginTop="3dp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@color/ColorTextForWindow"
+                android:dividerHeight="@dimen/twodp"
+                android:id="@+id/listView"
+                android:layout_marginLeft="3dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/data_checking"
+            android:layout_weight="0.04"
+            android:textSize="16dp"
+            android:layout_gravity="left|bottom"
+            android:textColor="@color/ColorTextForWindow"
+            android:text="@string/data_checking" />
+
+        <ProgressBar
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:id="@+id/pbConnect"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="visible"
+            android:indeterminateDrawable="@drawable/spinner_load"
+            android:indeterminateOnly="true" />
+    </FrameLayout>
+
+</LinearLayout>

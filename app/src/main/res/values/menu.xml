@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Local">Локация</string>
+    <string name="Hero">Персонаж</string>
+    <string name="PvP">ПвП Бой</string>
+    <string name="Bank">Банк</string>
+    <string name="invent">Инвентарь</string>
+    <string name="settings">Настройки</string>
+    <string name="about">О програме</string>
+    <string name="regen">Востановится</string>
+</resources>

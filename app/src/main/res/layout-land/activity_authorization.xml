@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_hero_txt"
+            android:id="@+id/textView"
+            android:textColor="@color/ColorTextForWindow"
+            android:layout_gravity="center_horizontal"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Add_name_hero"
+                android:id="@+id/textView3"
+                android:textSize="15sp"
+                android:textColor="@color/ColorTextForWindow"
+                android:layout_margin="3dp"
+                android:layout_gravity="center_horizontal" />
+
+            <EditText
+                android:layout_width="151dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_name_hero"
+                android:background="@color/White"
+                android:textColor="@color/ColorWindow"
+                android:layout_margin="3dp"
+                android:layout_gravity="center_horizontal"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_add_avatar"
+                android:onClick="onClickAddAvatar"
+                android:layout_margin="3dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/btn_add_avatar" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_create_hero"
+                android:onClick="onClickCreateHero"
+                android:layout_margin="3dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/btn_create_hero" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:id="@+id/avatar"
+                android:scaleType="centerInside"
+                android:focusable="true" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/data_checking"
+            android:layout_weight="0.04"
+            android:textSize="16dp"
+            android:layout_gravity="left|bottom"
+            android:textColor="@color/ColorTextForWindow"
+            android:text="@string/data_checking" />
+
+        <ProgressBar
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:id="@+id/pbConnectEnter"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="visible"
+            android:indeterminateDrawable="@drawable/spinner_load"
+            android:indeterminateOnly="true" />
+    </FrameLayout>
+
+</LinearLayout>
