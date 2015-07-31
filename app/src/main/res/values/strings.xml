@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="app_name">Герои Мидгарда</string>
+    <string name="title_activity_avatar">Список аватаров</string>
     <string name="Registration">Регистрация</string>
     <string name="Fight">Бой</string>
     <string name="action_settings">Settings</string>
@@ -18,11 +19,15 @@
     <string name="No_connect">Нет соединение</string>
     <string name="Сonnect">Соединение с сервером</string>
     <string name="Load">Загрузка данных...</string>
+    <string name="change_avatar">Аватар успешно изменен</string>
     <string name="No_connecting">Не удалось подключится к серверу</string>
     <string name="No_connected">Связь разорвалась...</string>
     <string name="Pleayer_sick">Недостаточно очков здоровья, начать бой?</string>
+    <string name="Pleayer_sick2">Недостаточно очков здоровья, хотите продолжить?</string>
     <string name="No_Money">Недостаточно монет для ПвП боя</string>
     <string name="TitleVictory">ПОБЕДА!</string>
+    <string name="holiday">С ПРАЗДНИКОМ!!!</string>
+    <string name="birthday">С ДНЕМ РОЖДЕНИЯ!!!</string>
     <string name="Victory">ПОБЕДА! Не забудьте востановить здоровье и проверить рюкзак</string>
     <string name="Lose">ПОРАЖЕНИЕ</string>
     <string name="lvl_up">НОВЫЙ УРОВЕНЬ</string>
@@ -34,19 +39,33 @@
     <string name="qExit">Вы действительно хотите покинуть игру?</string>
     <string name="ExitForGame">Вы вышли с игры</string>
     <string name="Select_account">Выберите учетную запись Google</string>
-    <string name="no_hero_txt">В вашей учетной записи Google нет героя. Для создание героя введите его имя, а также выберите аватар (Размер аватара не должен превышать 130х130).</string>
-    <string name="Add_name_hero">Введите имя героя</string>
-    <string name="Add_avatar_hero">Выберите аватар</string>
+    <string name="no_hero_txt">В вашей учетной записи Google нет героя</string>
+    <string name="Add_name_hero">Имя героя</string>
+    <string name="date_birth">Дата рождения</string>
+    <string name="select_sex">Укажите пол героя</string>
+    <string name="Add_avatar_hero">Изменить аватар</string>
     <string name="btn_add_avatar">Выбрать аватар</string>
     <string name="btn_create_hero">Создать героя</string>
     <string name="data_checking">Проверка данных...</string>
-    <string name="name_exists">Герой с таким именем уже существует. Пожалуйста, введите новое имя.</string>
-    <string name="registered">Регистрация Вашего героя прошла успешно.</string>
-    <string name="velcom">ДОБРО ПОЖАЛОВАТЬ</string>
+    <string name="registered"></string>
+    <string name="daily">Играй 7 дней подряд и получи 4 G!</string>
+    <string name="velcom">ДОБРО ПОЖАЛВАТЬ!</string>
     <string name="HEAD">ГОЛОВА</string>
     <string name="SARS">ТОРС</string>
     <string name="LEGS">НОГИ</string>
     <string name="regenerates"> востанавливает здоровье</string>
     <string name="synchronization">Данные героя успешно сохранены на сервере</string>
     <string name="good">Боги благоволят Вам!</string>
+    <string name="donate">Пожертвовать</string>
+    <string name="no_donate">Отказатся</string>
+    <string name="bounty">ЕЖЕДНЫЕВНИЕ ПОДАРКИ!!!</string>
+    <string name="small_age">Игрок не должен быть младше 16-ти лет</string>
+    <string-array name="sex">
+        <item>мужчина</item>
+        <item>женщина</item>
+    </string-array>
+    <string name="title_activity_opponent">Выбор оппонента</string>
+    <string name="setting">Настройки</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="pass">Пароль</string>
 </resources>

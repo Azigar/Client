@@ -1,4 +1,4 @@
-package ua.azigar.client.Client;
+package ua.azigar.client.Resources;
 
 /**
  * Created by Azigar on 10.06.2015.
@@ -12,31 +12,53 @@ public class SocketConfig {
     int SERVER_PORT = 8888;
     String SOCKET_MESSAGE = null;
     String SOCKET_OUT;
-    String ID, HP, MAX_HP, MANA, MAX_MANA, VIP;
-    String ID_ENEMY, HP_ENEMY;
+    String ID, NAME, HP, MANA, MAX_HP, MAX_MANA, AVATAR, DATE_BIRTH, SEX, PASS;
+    String ID_ENEMY, HP_ENEMY, NAME_ENEMY;
     String LAST_LOCAL;
 
 
-    public String getLAST_LOCAL() {
-        return LAST_LOCAL;
+    public String getSEX() {
+        return SEX;
     }
 
-    public void setLAST_LOCAL(String LAST_LOCAL) {
-        this.LAST_LOCAL = LAST_LOCAL;
+    public String getPASS() {
+        return PASS;
     }
 
-    public String getVIP() {
-
-        return VIP;
+    public void setPASS(String PASS) {
+        this.PASS = PASS;
     }
 
-    public void setVIP(String VIP) {
-        this.VIP = VIP;
+    public String getNAME_ENEMY() {
+        return NAME_ENEMY;
+    }
+
+    public void setNAME_ENEMY(String NAME_ENEMY) {
+        this.NAME_ENEMY = NAME_ENEMY;
+    }
+
+    public void setSEX(String SEX) {
+        this.SEX = SEX;
     }
 
     public String getMAX_MANA() {
-
         return MAX_MANA;
+    }
+
+    public String getDATE_BIRTH() {
+        return DATE_BIRTH;
+    }
+
+    public void setDATE_BIRTH(String DATE_BIRTH) {
+        this.DATE_BIRTH = DATE_BIRTH;
+    }
+
+    public String getAVATAR() {
+        return AVATAR;
+    }
+
+    public void setAVATAR(String AVATAR) {
+        this.AVATAR = AVATAR;
     }
 
     public void setMAX_MANA(String MAX_MANA) {
@@ -50,6 +72,22 @@ public class SocketConfig {
 
     public void setMAX_HP(String MAX_HP) {
         this.MAX_HP = MAX_HP;
+    }
+
+    public String getLAST_LOCAL() {
+        return LAST_LOCAL;
+    }
+
+    public String getNAME() {
+        return NAME;
+    }
+
+    public void setNAME(String NAME) {
+        this.NAME = NAME;
+    }
+
+    public void setLAST_LOCAL(String LAST_LOCAL) {
+        this.LAST_LOCAL = LAST_LOCAL;
     }
 
     public String getHP_ENEMY() {

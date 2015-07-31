@@ -2,10 +2,10 @@
 <resources>
     <string name="local1">Посёлок Фершемпенуаз</string>
     <string-array name="select1">
-        <item>GO --- "Хомутиха"</item>
-        <item>NPC -- Староста поселка</item>
-        <item>BOT -- Колорадский жук</item>
-        <item>BOT -- Мышун</item>
-        <item>BOT -- Большая муха</item>
+        <item>Хомутиха</item>
+        <item>Староста поселка</item>
+        <item>Колорадский жук</item>
+        <item>Мышун</item>
+        <item>Большая муха</item>
     </string-array>
 </resources>

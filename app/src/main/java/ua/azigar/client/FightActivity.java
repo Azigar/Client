@@ -22,7 +22,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import ua.azigar.client.Client.Fight;
-import ua.azigar.client.Client.SocketConfig;
+import ua.azigar.client.Resources.SocketConfig;
 import ua.azigar.client.Resources.MyHero;
 import ua.azigar.client.Resources.Progress_hp;
 import ua.azigar.client.Resources.DialogScreen;
@@ -32,7 +32,7 @@ import ua.azigar.client.Resources.Progress_mana;
 @SuppressWarnings("ResourceType")
 public class FightActivity extends ActionBarActivity implements View.OnClickListener {
 
-    Handler h, h_img_enemy;
+    Handler h;
     SocketConfig conf = new SocketConfig();
     Fight fight;
     AlertDialog dialog;
@@ -40,7 +40,7 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
     SharedPreferences sPref;  //подключаю экземпляр класса SharedPreferences:
     static final String PREF_LOCATION = "LOCATION";
 
-    String id_Enemy, name_Enemy, hp_Enemy, mana_Enemy, lvl_Enemy; //стати противника
+    String id_Enemy, name_Enemy, hp_Enemy, mana_Enemy, lvl_Enemy, avatar_Enemy, sex_Enemy; //стати противника
 
     static Timer timer;
     static int time = 0;
@@ -53,6 +53,9 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
     static Progress_hp hpHero, hpEnemy;
     static Progress_mana manaHero, manaEnemy;
     static ImageView imgEnemy, imgHero;
+
+    private static String s1Atk, s2Atk, s3Atk, s4Atk;
+    private static String s1Def, s2Def, s3Def, s4Def;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,22 +75,24 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
         this.lvl_Enemy = intent.getStringExtra("lvl");
         this.hp_Enemy = intent.getStringExtra("hp");
         this.name_Enemy = intent.getStringExtra("name");
+        this.avatar_Enemy = intent.getStringExtra("avatar");
         this.mana_Enemy = intent.getStringExtra("mana");
            if (Integer.parseInt(mana_Enemy) == 0) {
                mana_Enemy = "1";
            }
+        this.sex_Enemy = intent.getStringExtra("sex");
         //подключаю глобальные переменные для хранения данных о герое
         final MyHero app = ((MyHero)getApplicationContext());
+        SEX(Integer.parseInt(app.getSEX()), Integer.parseInt(sex_Enemy)); //мальчик-девочка
         //пишу данные переменные сокета
         conf.setID(app.getID()); //cохраняю ID игрока
         conf.setMANA(app.getMANA()); //сохраняю к-во маны героя
         conf.setHP(app.getHP()); //сохраняю к-во ОЗ героя
-
+        //пишу в конф. последнее активити локации
         final String PREF = app.getID(); // это будет имя файла настроек
         sPref = getSharedPreferences(PREF, Context.MODE_PRIVATE); //инициализирую SharedPreferences
         conf.setLAST_LOCAL(sPref.getString(PREF_LOCATION, "ua.azigar.client.intent.action.LocalActivity1")); //пишу в конф. последнее активити
-        intent = new Intent(conf.getLAST_LOCAL());
-
+        intent = new Intent(conf.getLAST_LOCAL()); //подключаю к новуму Intent последнее активити локации
         //найдем View-элементы
         TimerView = (TextView) findViewById(R.id.txtTimer);
         heroView = (TextView) findViewById(R.id.nameHero1);
@@ -109,21 +114,21 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
         pbConnect = (ProgressBar) findViewById(R.id.pbConnect);
         pbConnectEnter = (ProgressBar) findViewById(R.id.pbConnectEnter);
         hpHero = (Progress_hp) findViewById(R.id.hpHero1);
-            hpHero.setMaxValue(Integer.parseInt(app.getMAX_HP()));
+        hpHero.setMaxValue(Integer.parseInt(app.getMAX_HP()));
             hpHero.setValue(Integer.parseInt(app.getHP()));
         hpEnemy = (Progress_hp) findViewById(R.id.hpHero2);
-            hpEnemy.setMaxValue(Integer.parseInt(hp_Enemy));
+        hpEnemy.setMaxValue(Integer.parseInt(hp_Enemy));
             hpEnemy.setValue(Integer.parseInt(hp_Enemy));
         manaHero = (Progress_mana) findViewById(R.id.manaHero1);
-            manaHero.setMaxValue(Integer.parseInt(app.getMAX_MANA()));
+        manaHero.setMaxValue(Integer.parseInt(app.getMAX_MANA()));
             manaHero.setValue(Integer.parseInt(app.getMANA()));
         manaEnemy = (Progress_mana) findViewById(R.id.manaHero2);
-            manaEnemy.setMaxValue(Integer.parseInt(mana_Enemy));
+        manaEnemy.setMaxValue(Integer.parseInt(mana_Enemy));
             manaEnemy.setValue(Integer.parseInt(mana_Enemy));
         imgEnemy = (ImageView) findViewById(R.id.imgEnemy);
-            ImgEnemy(Integer.parseInt(id_Enemy));
+            imgEnemy.setImageResource(getResources().getIdentifier(avatar_Enemy, "drawable", getPackageName()));
         imgHero = (ImageView) findViewById(R.id.imgHero);
-            imgHero.setImageResource(R.drawable.men);
+            imgHero.setImageResource(getResources().getIdentifier(app.getAVATAR(), "drawable", getPackageName()));
 
         CloseBtnAtk(); CloseBtnDef(); //Закриваем все кнопочки
         DisableAll(); //прячем все обьекти кроме прогрессБара и комента
@@ -148,13 +153,11 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
                     case 2:  //Не удалось подключится к серверу
                         Toast.makeText(FightActivity.this, R.string.No_connecting, Toast.LENGTH_LONG).show();
                         startActivity(intent);
-                        //finish(); //закрываю активити
                         break;
 
                     case 3:  //Связь разорвалась
                         Toast.makeText(FightActivity.this, R.string.No_connected, Toast.LENGTH_LONG).show();
                         startActivity(intent);
-                        //finish(); //закрываю активити
                         break;
 
                     case 4: //если первый ход игрока
@@ -299,12 +302,11 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
                         app.setGOLD((String) msg.obj);
                         conf.setSOCKET_MESSAGE("END"); //закрываю активити боя
                         startActivity(intent);
-                        //finish(); //закрываю активити
                         break;
 
                     case 24:   //сервер говорит цену за востановление
                         cmd = (String) msg.obj;
-                        dialogMessage = "Боги могут исцелить Вашего героя за " + cmd;
+                        TxtRegen(cmd);
                         dialog = DialogScreen.getDialog(FightActivity.this, DialogScreen.DIALOG_PLAYER_SICK, conf, dialogMessage);
                         dialog.show();
                         break;
@@ -346,7 +348,35 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
                 }
             }
         };
-        fight = new Fight(h, conf, app.getID(), id_Enemy); //запуск клиента для боя с параметрами на екземпляр хандлера и конфига
+        fight = new Fight(h, conf); //запуск клиента для боя с параметрами на екземпляр хандлера и конфига
+    }
+
+    //мальчик-девочка
+    private static void SEX(int sex1, int sex2) {
+        if (sex1 == 1){
+            s1Atk = "";
+            s2Atk = "я";
+            s3Atk = "";
+            s4Atk = "ый";
+        }
+        else {
+            s1Atk = "а";
+            s2Atk = "ь";
+            s3Atk = "ла";
+            s4Atk = "ая";
+        }
+        if (sex2 == 1){
+            s1Def = "";
+            s2Def = "я";
+            s3Def = "";
+            s4Def = "ый";
+        }
+        else {
+            s1Def = "а";
+            s2Def = "ь";
+            s3Def = "ла";
+            s4Def = "ая";
+        }
     }
 
     //смерть опонента
@@ -362,10 +392,13 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
             int txt = randTxt();
             switch (txt) {
                 case 1:
-                    СomentFight.setText(comm + ". "+nameAtk + " убил " + nameDef);
+                    СomentFight.setText(comm + ". "+nameAtk + " убил" + s1Atk + " " + nameDef + ".");
                     break;
                 case 2:
-                    СomentFight.setText(comm + ". "+nameDef + " погиб");
+                    СomentFight.setText(comm + ". "+nameDef + " погиб" + s3Def + ".");
+                    break;
+                case 3:
+                    СomentFight.setText(comm + ". "+nameAtk + " одержал" + s1Atk + " победу.");
                     break;
             }
             death = true;
@@ -373,6 +406,7 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
         return death;
     }
 
+    //когда все данные загрузились
     static void Downloaded() {
         EnableAll();  //показываю все обьекты
         DisableLoad(); //прячу обьекты закрузки
@@ -436,10 +470,29 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
         int txt = randTxt();
         switch (txt) {
             case 1:
-                СomentFight.setText(nameAtk + " яросно бросился на " + nameDef);
+                СomentFight.setText(nameAtk + " яросно бросил" + s1Atk + "с" + s2Atk + " на " + nameDef);
                 break;
             case 2:
-                СomentFight.setText(nameAtk + " первым настиг " + nameDef);
+                СomentFight.setText(nameAtk + " перв" + s4Atk + " настиг" + s3Atk + " " + nameDef);
+                break;
+            case 3:
+                СomentFight.setText(nameDef + " был" + s1Def + " взят" + s1Atk + " врасплох");
+                break;
+        }
+    }
+
+    //текстовка о исцелении
+    private void TxtRegen(String money) {
+        int txt = randTxt();
+        switch (txt) {
+            case 1:
+                dialogMessage = "Боги могут исцелить тебя за " + money + ".";
+                break;
+            case 2:
+                dialogMessage = "Приподнеси в жертву богам " + money + " и они исцелят тебя.";
+                break;
+            case 3:
+                dialogMessage = "Для исцеление пожертвуй богам " + money + ".";
                 break;
         }
     }
@@ -447,7 +500,7 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
     //рандом текста
     private static int randTxt() {
         Random random = new Random();
-        return random.nextInt(2) + 1;
+        return random.nextInt(3) + 1;
     }
 
     private void ThreeSeconds() {
@@ -557,7 +610,7 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
 
     //текстовка Начало нового хода
     private static void txtHod(String name) {
-        hodView.setText(name);
+        hodView.setText("Ходит" + "\n" + name);
     }
 
     //Включить на атаку
@@ -615,23 +668,6 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
     private static int randUdar() {
         Random random = new Random();
         return random.nextInt(3) + 1;
-    }
-
-    //рандом направление атаки/защиты
-    private static void ImgEnemy(int id) {
-        switch (id) {
-            case 1:  //попытка подключение к серверу
-                imgEnemy.setImageResource(R.drawable.bot_1);
-                break;
-
-            case 2:  //попытка подключение к серверу
-                imgEnemy.setImageResource(R.drawable.bot_2);
-                break;
-
-            case 4:  //попытка подключение к серверу
-                imgEnemy.setImageResource(R.drawable.bot_4);
-                break;
-        }
     }
 }
 

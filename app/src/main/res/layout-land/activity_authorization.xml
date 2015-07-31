@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -13,10 +13,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_hero_txt"
-            android:id="@+id/textView"
+            android:id="@+id/textView1"
             android:textColor="@color/ColorTextForWindow"
             android:layout_gravity="center_horizontal"
-            android:textSize="15sp" />
+            android:textSize="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:textStyle="italic" />
     </LinearLayout>
 
     <LinearLayout
@@ -30,42 +33,54 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Add_name_hero"
-                android:id="@+id/textView3"
-                android:textSize="15sp"
-                android:textColor="@color/ColorTextForWindow"
-                android:layout_margin="3dp"
-                android:layout_gravity="center_horizontal" />
-
             <EditText
-                android:layout_width="151dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/add_name_hero"
                 android:background="@color/White"
+                android:text="@string/Add_name_hero"
                 android:textColor="@color/ColorWindow"
                 android:layout_margin="3dp"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"
+                android:textSize="22dp" />
 
-            <Button
-                android:layout_width="wrap_content"
+            <EditText
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_add_avatar"
-                android:onClick="onClickAddAvatar"
+                android:id="@+id/add_pass"
+                android:background="@color/White"
+                android:text="@string/pass"
+                android:textColor="@color/ColorWindow"
                 android:layout_margin="3dp"
                 android:layout_gravity="center_horizontal"
-                android:id="@+id/btn_add_avatar" />
+                android:textSize="22dp" />
 
             <Button
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="@string/date_birth"
+                android:onClick="onClickDialogDate"
+                android:layout_margin="3dp"
+                android:id="@+id/btn_dateb_birth"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_create_hero"
-                android:onClick="onClickCreateHero"
-                android:layout_margin="3dp"
+                android:text="@string/select_sex"
+                android:id="@+id/textView2"
+                android:textSize="15sp"
+                android:textColor="@color/ColorTextForWindow"
                 android:layout_gravity="center_horizontal"
-                android:id="@+id/btn_create_hero" />
+                android:layout_marginTop="5dp" />
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="150dp"
+                android:textColor="@color/ColorTextForWindow"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -79,9 +94,33 @@
                 android:layout_height="130dp"
                 android:id="@+id/avatar"
                 android:scaleType="centerInside"
-                android:focusable="true" />
+                android:focusable="true"
+                android:layout_gravity="center_horizontal" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Add_avatar_hero"
+                android:onClick="onClickAddAvatar"
+                android:layout_margin="3dp"
+                android:id="@+id/btn_add_avatar"
+                android:layout_gravity="center_horizontal" />
 
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_create_hero"
+            android:onClick="onClickCreateHero"
+            android:id="@+id/btn_create_hero"
+            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 
     <FrameLayout

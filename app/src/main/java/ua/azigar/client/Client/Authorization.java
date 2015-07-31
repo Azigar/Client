@@ -13,20 +13,18 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import ua.azigar.client.Resources.SocketConfig;
+
 /**
  * Created by Azigar on 06.07.2015.
  */
 public class Authorization extends Thread {
 
     BufferedReader in;
-    Socket socket;
+    public Socket socket;
     Handler h;
     SocketConfig conf;
-
     private boolean stopped = false;
-
-    String id_My;
-    int id_Enemy;
 
     public Authorization(Handler h1, SocketConfig conf) {  //главный
         this.h = h1;
@@ -101,6 +99,24 @@ public class Authorization extends Thread {
                         threadOUT.interrupt(); //закрываю второй поток, третий метод
                         socket.close(); //закрываю сокет, а также второй поток, четвертый метод
                         break; //закрываю этот поток
+                    }
+                    //клиент спрашивает какой подарок на праздник
+                    if (conf.getSOCKET_OUT() == "WHAT_BOUNTY") {
+                        msg.what = 22; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
+                    }
+                    //клиент спрашивает какой ежедневный подарок подарок
+                    if (conf.getSOCKET_OUT() == "WHAT_HOLIDAY") {
+                        msg.what = 25; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
+                    }
+                    //клиент спрашивает какой ежедневный подарок подарок
+                    if (conf.getSOCKET_OUT() == "WHAT_BIRTHDAY") {
+                        msg.what = 26; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
                     }
                     //клиент спрашивает имя игрока
                     if (conf.getSOCKET_OUT() == "NAME") {
@@ -184,8 +200,43 @@ public class Authorization extends Thread {
                     if (conf.getSOCKET_OUT() == "VIP") {
                         msg.what = 19; //пришел ответ от сервера
                         msg.obj = cmd;
-                        conf.setSOCKET_MESSAGE("END");
                         h.sendMessage(msg);
+                    }
+                    //клиент спрашивает пол героя
+                    if (conf.getSOCKET_OUT() == "SEX") {
+                        msg.what = 23; //пришел ответ от сервера
+                        msg.obj = cmd;
+                         h.sendMessage(msg);
+                    }
+                    //клиент спрашивает аватар героя
+                    if (conf.getSOCKET_OUT() == "AVATAR") {
+                        msg.what = 24; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
+                    }
+                    //сервер говорит, что есть ежедневный подарка
+                    if (conf.getSOCKET_OUT() == "BOUNTY" && cmd.equalsIgnoreCase("YES_BOUNTY")) {
+                        conf.setSOCKET_MESSAGE("WHAT_BOUNTY");
+                    }
+                    //сервер говорит, что нет ежедневного подарка
+                    if (conf.getSOCKET_OUT() == "BOUNTY" && cmd.equalsIgnoreCase("NO_BOUNTY")) {
+                        conf.setSOCKET_MESSAGE("HOLIDAY");
+                    }
+                    //сервер говорит, что есть подарок на праздник
+                    if (conf.getSOCKET_OUT() == "HOLIDAY" && cmd.equalsIgnoreCase("YES_HOLIDAY")) {
+                        conf.setSOCKET_MESSAGE("WHAT_HOLIDAY");
+                    }
+                    //сервер говорит, что нет праздника
+                    if (conf.getSOCKET_OUT() == "HOLIDAY" && cmd.equalsIgnoreCase("NO_HOLIDAY")) {
+                        conf.setSOCKET_MESSAGE("BIRTHDAY");
+                    }
+                    //сервер говорит, что у игрока день рождения
+                    if (conf.getSOCKET_OUT() == "BIRTHDAY" && cmd.equalsIgnoreCase("YES_BIRTHDAY")) {
+                        conf.setSOCKET_MESSAGE("WHAT_BIRTHDAY");  //спрашиваю какой подарок
+                    }
+                    //сервер говорит, что нет праздника
+                    if (conf.getSOCKET_OUT() == "BIRTHDAY" && cmd.equalsIgnoreCase("NO_BIRTHDAY")) {
+                        conf.setSOCKET_MESSAGE("GET");
                     }
                     ////КОМАНДЫ СЕРВЕРА
                     //сервер запрашивает ID игрока
@@ -204,9 +255,33 @@ public class Authorization extends Thread {
                     if (cmd.equalsIgnoreCase("NAME_EXISTS")) {
                         h.sendEmptyMessage(12);
                     }
+                    //сервер запрашивает дату рождения
+                    if (cmd.equalsIgnoreCase("DATE_BIRTH")) {
+                        conf.setSOCKET_MESSAGE(conf.getDATE_BIRTH());
+                    }
+                    //сервер запрашивает пол нового героя
+                    if (cmd.equalsIgnoreCase("SEX")) {
+                        conf.setSOCKET_MESSAGE(conf.getSEX());
+                    }
+                    //сервер запрашивает аватар нового героя
+                    if (cmd.equalsIgnoreCase("AVATAR")) {
+                        conf.setSOCKET_MESSAGE(conf.getAVATAR());
+                    }
+                    //сервер запрашивает аватар нового героя
+                    if (cmd.equalsIgnoreCase("PASS")) {
+                        conf.setSOCKET_MESSAGE(conf.getPASS());
+                    }
                     //сервер говорит, что регестрация прошла успешно
                     if (cmd.equalsIgnoreCase("REGISTERED")) {
                         h.sendEmptyMessage(13);
+                    }
+                    //сервер говорит, что можно входить без пароля
+                    if (cmd.equalsIgnoreCase("NO_PASS")) {
+                        h.sendEmptyMessage(27);
+                    }
+                    //сервер спрашивает пароль
+                    if (cmd.equalsIgnoreCase("YES_PASS")) {
+                        h.sendEmptyMessage(28);
                     }
                     //сервер передает вопросы клиенту
                     if (cmd.equalsIgnoreCase("OK")) {

@@ -11,4 +11,9 @@
     <color name="ColorTextForWindow">#F0E68C</color>
     <color name="ColorText">#7FA40E</color>
     <color name="ColorTextTitleMessage">#771713</color>
+    <color name="hp">#cb2925</color>
+    <color name="mana">#1947C8</color>
+    <color name="exp">#E1C841</color>
+    <color name="pvp_exp">#3E9136</color>
+    <color name="list">#00FF00</color>
 </resources>

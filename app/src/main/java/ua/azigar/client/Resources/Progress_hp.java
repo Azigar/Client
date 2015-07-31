@@ -5,9 +5,8 @@ import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.AttributeSet;
 import android.widget.TextView;
-
 /**
- * Created by Azigar on 28.06.2015.
+ * Created by Azigar on 30.07.2015.
  */
 public class Progress_hp extends TextView {
 

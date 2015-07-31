@@ -13,6 +13,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import ua.azigar.client.Resources.SocketConfig;
+
 /**
  * Created by Azigar on 17.06.2015.
  */
@@ -23,14 +25,9 @@ public class Fight extends Thread {
     Handler h;
     SocketConfig conf;
 
-    String idPlayer;
-    String idEnemy;
-
-    public Fight(Handler h1, SocketConfig conf, String id_player, String id_enemy) {
+    public Fight(Handler h1, SocketConfig conf) {
         this.h = h1;
         this.conf = conf;
-        this.idPlayer = id_player;
-        this.idEnemy = id_enemy;
         start();
     }
     public void run() {
@@ -201,25 +198,25 @@ public class Fight extends Thread {
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
-                    //запрашиваю новое мак. значение ПвП-опыта
+                    //запрашиваю новое мак. значение здоровья
                     if (conf.getSOCKET_OUT() == "MAX_HP") {
                         msg.what = 18;//пришел ответ от сервера
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
-                    //запрашиваю новое мак. значение ПвП-опыта
+                    //запрашиваю новое значение здоровья
                     if (conf.getSOCKET_OUT() == "HP") {
                         msg.what = 19;//пришел ответ от сервера
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
-                    //запрашиваю новое мак. значение ПвП-опыта
+                    //запрашиваю новое мак. значение мани
                     if (conf.getSOCKET_OUT() == "MAX_MANA") {
                         msg.what = 20;//пришел ответ от сервера
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
-                    //запрашиваю новое мак. значение ПвП-опыта
+                    //запрашиваю новое мак. значение мани
                     if (conf.getSOCKET_OUT() == "MANA") {
                         msg.what = 21;//пришел ответ от сервера
                         msg.obj = cmd;
@@ -231,30 +228,31 @@ public class Fight extends Thread {
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
-                    //запрашиваю новое мак. значение ПвП-опыта
+                    //запрашиваю к-во голда
                     if (conf.getSOCKET_OUT() == "GOLD") {
                         msg.what = 23;//пришел ответ от сервера
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
-                    //запрашиваю новое мак. значение ПвП-опыта
+                    //запрашиваю стоимость исцеление
                     if (conf.getSOCKET_OUT() == "PRICE") {
                         msg.what = 24;//пришел ответ от сервера
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
-                    //запрашиваю новое мак. значение ПвП-опыта
+                    //согласен или не согласен оплатить исцеление
                     if ((conf.getSOCKET_OUT() == "YES" || conf.getSOCKET_OUT() == "NO") && cmd.equalsIgnoreCase("GOOD")) {
                         conf.setSOCKET_MESSAGE("GET");  //получаю новые данные о герое
                     }
 
                     ////КОМАНДЫ СЕРВЕРА
-                    //клиент ранен или убит
-                    if (conf.getSOCKET_OUT() == "REGEN" || cmd.equalsIgnoreCase("REGEN")) {
+                    //сервер потверждает, что клиент ранен может оплатить исцеление
+                    if (cmd.equalsIgnoreCase("REGEN")) {
                         conf.setSOCKET_MESSAGE("PRICE");  //спрашиваю цену за востановление
                     }
-                    if (cmd.equalsIgnoreCase("NO_REGEN")) {
-                        conf.setSOCKET_MESSAGE("GET");  //спрашиваю цену за востановление
+                    //сервер говорит, что герой либо здоров или у него нет денег
+                    if (cmd.equalsIgnoreCase("NO_REGEN") || cmd.equalsIgnoreCase("NO_MONEY")) {
+                        conf.setSOCKET_MESSAGE("GET");  //спрашиваю новые хар-ки героя
                     }
                     //сервер спрашивает ID игрока
                     if (cmd.equalsIgnoreCase("ID_PLAEYR")){

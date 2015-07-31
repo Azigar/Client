@@ -24,10 +24,29 @@ public class MyHero extends Application {
     String MONEY;
     String GOLD;
     String VIP;
+    String AVATAR;
     String FIRST_START;
+    String SEX;
+
+
+    public String getSEX() {
+        return SEX;
+    }
+
+    public void setSEX(String SEX) {
+        this.SEX = SEX;
+    }
 
     public String getFIRST_START() {
         return FIRST_START;
+    }
+
+    public String getAVATAR() {
+        return AVATAR;
+    }
+
+    public void setAVATAR(String AVATAR) {
+        this.AVATAR = AVATAR;
     }
 
     public void setFIRST_START(String FIRST_START) {

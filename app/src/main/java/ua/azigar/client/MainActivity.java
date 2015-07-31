@@ -9,10 +9,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import ua.azigar.client.Resources.SocketConfig;
+import ua.azigar.client.Resources.DialogScreen;
+
 
 public class MainActivity extends Activity {
 
     AlertDialog.Builder builder;
+    AlertDialog dialog;
+    SocketConfig conf;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,16 +31,8 @@ public class MainActivity extends Activity {
 
         final String[] accn = getAccNames(); //пишу в массив все имена аакаунтов аккаунты
         if (accn.length==0) {  //если длина массива = 0 - аккаунтов нет
-            builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.error);
-            builder.setMessage(R.string.no_accounts); // сообщение
-            builder.setPositiveButton(R.string.Exit, new DialogInterface.OnClickListener() { // Кнопка Выход
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    finish(); //закрываю активити
-                    Toast.makeText(MainActivity.this, R.string.ExitForGame, Toast.LENGTH_LONG).show();
-                }
-            }).create().show();
+            dialog = DialogScreen.getDialog(this, DialogScreen.DIALOG_REGISTERED, conf, "");
+            dialog.show();
         } else {  //запуск диалог для выбора аккаута
             builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.Select_account);

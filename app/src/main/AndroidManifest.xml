@@ -53,7 +53,35 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".HeroActivity"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="ua.azigar.client.intent.action.HeroActivity" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AvatarActivity"
+            android:label="@string/title_activity_avatar"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name=".SettingActivity"
+            android:label="@string/setting"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name=".OpponentActivity"
+            android:screenOrientation="landscape"
+            android:label="@string/title_activity_opponent" >
+            <intent-filter>
+                <action android:name="ua.azigar.client.intent.action.OpponentActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

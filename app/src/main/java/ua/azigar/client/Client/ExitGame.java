@@ -13,6 +13,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import ua.azigar.client.Resources.SocketConfig;
+
 /**
  * Created by Azigar on 06.07.2015.
  */
@@ -97,7 +99,6 @@ public class ExitGame extends Thread {
                         break;
                     }
                     ////КОМАНДЫ СЕРВЕРА
-                    //сервер запрашивает ID игрока
                     //сервер запрашивает ID игрока
                     if (cmd.equalsIgnoreCase("ID_PLAEYR")) {
                         conf.setSOCKET_MESSAGE(conf.getID());

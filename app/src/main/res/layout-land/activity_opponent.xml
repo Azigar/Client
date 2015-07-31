@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:id="@+id/name_lvl"
+                android:layout_gravity="right"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:textIsSelectable="false"
+                android:textColor="@color/ColorTextForWindow"
+                android:layout_marginTop="2dp"
+                android:typeface="serif" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:layout_gravity="center_horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgVIP"
+                android:src="@drawable/vip0"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="2dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PvP_lvl"
+                        android:id="@+id/pvp_lvl"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/ColorTextForWindow"
+                        android:textSize="13dp"
+                        android:textStyle="bold|italic"
+                        android:typeface="serif" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Храбрость - 188763"
+                        android:id="@+id/pvp_exp"
+                        android:textSize="12dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/pvp_exp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_gravity="center_horizontal" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3">
+
+                <ImageView
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:id="@+id/imgHero"
+                    android:scaleType="centerInside"
+                    android:layout_gravity="center" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Сила"
+                        android:id="@+id/txt_str"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="@color/ColorText"
+                        android:layout_marginTop="0dp" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="min урон"
+                        android:id="@+id/txt_min_uron"
+                        android:textSize="13dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/ColorText"
+                        android:layout_gravity="center_horizontal"
+                        android:textIsSelectable="false"
+                        android:layout_marginLeft="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="max урон"
+                        android:id="@+id/txt_max_uron"
+                        android:textSize="13dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/ColorText"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ловкость"
+                        android:id="@+id/txt_dex"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/ColorText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Интуиция"
+                        android:id="@+id/txt_inst"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/ColorText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Защита"
+                        android:id="@+id/txt_def"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/ColorText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Здоровье"
+                        android:id="@+id/txt_hp"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/hp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Мана"
+                        android:id="@+id/txt_mana"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/mana" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="25"
+                        android:id="@+id/str"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/White"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="0dp" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="15"
+                        android:id="@+id/min_uron"
+                        android:textSize="13dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/White"
+                        android:layout_marginLeft="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="16"
+                        android:id="@+id/max_uron"
+                        android:textSize="13dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/White"
+                        android:layout_marginLeft="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="30"
+                        android:id="@+id/dex"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/White"
+                        android:layout_marginLeft="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="45"
+                        android:id="@+id/inst"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/White"
+                        android:layout_marginLeft="10dp"
+                        android:textIsSelectable="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="50"
+                        android:id="@+id/def"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/White"
+                        android:layout_marginLeft="10dp"
+                        android:textIsSelectable="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10563"
+                        android:id="@+id/hp"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/hp"
+                        android:layout_marginLeft="10dp"
+                        android:textIsSelectable="false" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="15"
+                        android:id="@+id/mana"
+                        android:textSize="15dp"
+                        android:textStyle="normal"
+                        android:typeface="sans"
+                        android:textColor="@color/mana"
+                        android:layout_marginLeft="10dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:layout_marginLeft="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Фракция"
+                    android:id="@+id/fraction"
+                    android:textSize="15dp"
+                    android:textStyle="normal"
+                    android:typeface="sans"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="0dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Школа магии"
+                    android:id="@+id/school"
+                    android:textSize="15dp"
+                    android:textStyle="normal"
+                    android:typeface="sans"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:layout_marginLeft="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Мак. нанесенный урон"
+                    android:id="@+id/my_uron"
+                    android:textSize="15dp"
+                    android:textStyle="normal"
+                    android:typeface="sans"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:layout_marginLeft="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Мак. полученый урон"
+                    android:id="@+id/enemy_uron"
+                    android:textSize="15dp"
+                    android:textStyle="normal"
+                    android:typeface="sans"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:layout_marginLeft="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="К-во PvE-побед"
+                    android:id="@+id/pve_v"
+                    android:textSize="15dp"
+                    android:textStyle="normal"
+                    android:typeface="sans"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:layout_marginLeft="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="К-во PvE-поражений"
+                    android:id="@+id/pve_l"
+                    android:textSize="15dp"
+                    android:textStyle="normal"
+                    android:typeface="sans"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:layout_marginLeft="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="К-во PvP-побед"
+                    android:id="@+id/pvp_v"
+                    android:textSize="15dp"
+                    android:textStyle="normal"
+                    android:typeface="sans"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:layout_marginLeft="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="К-во PvP-поражений"
+                    android:id="@+id/pvp_l"
+                    android:textSize="15dp"
+                    android:textStyle="normal"
+                    android:typeface="sans"
+                    android:textColor="@color/ColorTextForWindow"
+                    android:layout_marginLeft="10dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Атаковать"
+            android:onClick="onClickAtk"
+            android:drawableLeft="@drawable/atk20"
+            android:id="@+id/btnAtk"
+            android:layout_gravity="center_horizontal"
+            android:textSize="13dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Следующий"
+            android:onClick="onClickNext"
+            android:drawableLeft="@drawable/next20"
+            android:id="@+id/btnNext"
+            android:layout_gravity="center_horizontal"
+            android:textSize="13dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp" />
+
+        <EditText
+            android:layout_width="120dp"
+            android:layout_height="31dp"
+            android:id="@+id/edSearch"
+            android:background="@color/White"
+            android:text="введите имя"
+            android:textColor="@color/ColorWindow"
+            android:layout_margin="0dp"
+            android:textSize="13dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:onClick="onClickSearch"
+            android:id="@+id/btnSearch"
+            android:drawableLeft="@drawable/search20"
+            android:layout_gravity="left"
+            android:textSize="13dp" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/data_checking"
+            android:layout_weight="0.04"
+            android:textSize="16dp"
+            android:layout_gravity="left|bottom"
+            android:textColor="@color/ColorTextForWindow"
+            android:text="@string/data_checking" />
+
+        <ProgressBar
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:id="@+id/pbConnect"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="visible"
+            android:indeterminateDrawable="@drawable/spinner_load"
+            android:indeterminateOnly="true" />
+    </FrameLayout>
+
+</LinearLayout>
