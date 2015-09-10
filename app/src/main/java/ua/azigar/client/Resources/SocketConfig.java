@@ -13,9 +13,49 @@ public class SocketConfig {
     String SOCKET_MESSAGE = null;
     String SOCKET_OUT;
     String ID, NAME, HP, MANA, MAX_HP, MAX_MANA, AVATAR, DATE_BIRTH, SEX, PASS;
-    String ID_ENEMY, HP_ENEMY, NAME_ENEMY;
-    String LAST_LOCAL;
+    String ID_ENEMY, HP_ENEMY, NAME_ENEMY, SHOP, ID_OBJ;
+    String LAST_LOCAL, ID_QUEST, EXE_QUEST, IS_MANA;
 
+
+    public String getIS_MANA() {
+        return IS_MANA;
+    }
+
+    public void setIS_MANA(String IS_MANA) {
+        this.IS_MANA = IS_MANA;
+    }
+
+    public String getEXE_QUEST() {
+        return EXE_QUEST;
+    }
+
+    public void setEXE_QUEST(String EXE_QUEST) {
+        this.EXE_QUEST = EXE_QUEST;
+    }
+
+    public String getID_QUEST() {
+        return ID_QUEST;
+    }
+
+    public void setID_QUEST(String ID_QUEST) {
+        this.ID_QUEST = ID_QUEST;
+    }
+
+    public String getID_OBJ() {
+        return ID_OBJ;
+    }
+
+    public void setID_OBJ(String ID_OBJ) {
+        this.ID_OBJ = ID_OBJ;
+    }
+
+    public String getSHOP() {
+        return SHOP;
+    }
+
+    public void setSHOP(String SHOP) {
+        this.SHOP = SHOP;
+    }
 
     public String getSEX() {
         return SEX;

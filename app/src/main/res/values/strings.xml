@@ -9,6 +9,7 @@
     <string name="save_data">Сохранить данные?</string>
     <string name="yes">Да</string>
     <string name="Ok">OK</string>
+    <string name="begin">Еще раз</string>
     <string name="no">Нет</string>
     <string name="cancel">Отмена</string>
     <string name="saved">Сохранено</string>
@@ -18,13 +19,15 @@
     <string name="Died">ПОРАЖЕНИЕ. Ваш персонаж мертв</string>
     <string name="No_connect">Нет соединение</string>
     <string name="Сonnect">Соединение с сервером</string>
-    <string name="Load">Загрузка данных...</string>
+    <string name="Load">Загрузка...</string>
     <string name="change_avatar">Аватар успешно изменен</string>
     <string name="No_connecting">Не удалось подключится к серверу</string>
     <string name="No_connected">Связь разорвалась...</string>
     <string name="Pleayer_sick">Недостаточно очков здоровья, начать бой?</string>
+    <string name="full_inventar">Что бы завершить это задание, необходимо освободить место в рюкзаке.</string>
     <string name="Pleayer_sick2">Недостаточно очков здоровья, хотите продолжить?</string>
     <string name="No_Money">Недостаточно монет для ПвП боя</string>
+    <string name="shop">Магазин</string>
     <string name="TitleVictory">ПОБЕДА!</string>
     <string name="holiday">С ПРАЗДНИКОМ!!!</string>
     <string name="birthday">С ДНЕМ РОЖДЕНИЯ!!!</string>
@@ -34,6 +37,9 @@
     <string name="pvp_up">НОВОЕ ЗВАНИЕ</string>
     <string name="share">Поделиться с друзьями</string>
     <string name="error">ОШИБКА</string>
+    <string name="error2">Ошибка выполнение запроса. Программа будет закрыта. Поспробуйте позже или обратитесь к разработчикам.</string>
+    <string name="error3">Ошибка выполнение запроса. Поспробуйте позже или обратитесь к разработчикам.</string>
+    <string name="newGoogle">Введите новый Google-аккаунт</string>
     <string name="no_accounts">Учетные записи Google-сервис не найдены. "Пожалуйста, авторизируйтесь в Google на Вашем Android-устройстве."</string>
     <string name="Exit">Выход</string>
     <string name="qExit">Вы действительно хотите покинуть игру?</string>
@@ -46,10 +52,11 @@
     <string name="Add_avatar_hero">Изменить аватар</string>
     <string name="btn_add_avatar">Выбрать аватар</string>
     <string name="btn_create_hero">Создать героя</string>
-    <string name="data_checking">Проверка данных...</string>
-    <string name="registered"></string>
+    <string name="data_checking">Загрузка...</string>
+    <string name="reg_pass">Востановить</string>
+    <string name="registered">Регистрация Вашего героя прошла успешно. Запомните дату регистрации, она нужна для востановления пароля. По умолчанию вход осуществляется без пароля. В настройках Вы сможете повысить уровень защиты и включить пароль на вход в игру.</string>
     <string name="daily">Играй 7 дней подряд и получи 4 G!</string>
-    <string name="velcom">ДОБРО ПОЖАЛВАТЬ!</string>
+    <string name="velcom">ДОБРО ПОЖАЛОВАТЬ!</string>
     <string name="HEAD">ГОЛОВА</string>
     <string name="SARS">ТОРС</string>
     <string name="LEGS">НОГИ</string>
@@ -65,7 +72,15 @@
         <item>женщина</item>
     </string-array>
     <string name="title_activity_opponent">Выбор оппонента</string>
+    <string name="title_activity_quest">Задание</string>
+    <string name="title_activity_quests">Задание</string>
     <string name="setting">Настройки</string>
+    <string name="inventar">Инвентарь</string>
     <string name="hello_world">Hello world!</string>
     <string name="pass">Пароль</string>
+    <string name="wear">Надеть</string>
+    <string name="shoot">Снять</string>
+    <string name="Throw">Выбросить</string>
+    <string name="left_hand">Левая рука</string>
+    <string name="right_hand">Правая рука</string>
 </resources>

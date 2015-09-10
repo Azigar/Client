@@ -139,8 +139,8 @@ public class HeroActivity extends ActionBarActivity {
                     case 6:  //получил силу героя
                         m = (String) msg.obj;
                         str.setText(m);
-                        int min = (int) (Integer.parseInt(m) / 3);
-                        int max = (int) (Integer.parseInt(m) + (Integer.parseInt(m) / 3));
+                        int min = (int) (Integer.parseInt(m) / 5);
+                        int max = (int) (Integer.parseInt(m) + (Integer.parseInt(m) / 10));
                         min_uron.setText(String.valueOf(min));
                         max_uron.setText(String.valueOf(max));
                         conf.setSOCKET_MESSAGE("DEX");

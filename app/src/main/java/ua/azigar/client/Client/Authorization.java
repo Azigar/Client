@@ -26,9 +26,10 @@ public class Authorization extends Thread {
     SocketConfig conf;
     private boolean stopped = false;
 
-    public Authorization(Handler h1, SocketConfig conf) {  //главный
+    public Authorization(Handler h1, SocketConfig con) {  //главный
         this.h = h1;
-        this.conf = conf;
+        this.conf = con;
+        conf.setSOCKET_CONNECTED(false);
         start();
     }
 
@@ -130,6 +131,12 @@ public class Authorization extends Thread {
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
+                    //клиент спрашивает пвп-уровень героя
+                    if (conf.getSOCKET_OUT() == "PVP_LVL") {
+                        msg.what = 37; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
+                    }
                     //клиент спрашивает звание героя
                     if (conf.getSOCKET_OUT() == "TITLE") {
                         msg.what = 17; //пришел ответ от сервера
@@ -214,6 +221,28 @@ public class Authorization extends Thread {
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
+                    //клиент спрашивает ID-квеста
+                    if (conf.getSOCKET_OUT() == "GET_ID_QUEST") {
+                        msg.what = 39; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
+                    }
+                    if (conf.getSOCKET_OUT() == "GET_EXECUTE") {
+                        msg.what = 40; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
+                    }
+                    if (conf.getSOCKET_OUT() == "LAST_EXECUTE") {
+                        msg.what = 41; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
+                    }
+                    //клиент спрашивает новый пароль
+                    if (conf.getSOCKET_OUT() == "WHAT_NEW_PASS") {
+                        msg.what = 33; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
+                    }
                     //сервер говорит, что есть ежедневный подарка
                     if (conf.getSOCKET_OUT() == "BOUNTY" && cmd.equalsIgnoreCase("YES_BOUNTY")) {
                         conf.setSOCKET_MESSAGE("WHAT_BOUNTY");
@@ -239,6 +268,10 @@ public class Authorization extends Thread {
                         conf.setSOCKET_MESSAGE("GET");
                     }
                     ////КОМАНДЫ СЕРВЕРА
+                    //сервер оповещает об ошибке запроса
+                    if (cmd.equalsIgnoreCase("ERROR")) {
+                        h.sendEmptyMessage(38);
+                    }
                     //сервер запрашивает ID игрока
                     if (cmd.equalsIgnoreCase("ID_PLAEYR")) {
                         conf.setSOCKET_MESSAGE(conf.getID());
@@ -277,15 +310,64 @@ public class Authorization extends Thread {
                     }
                     //сервер говорит, что можно входить без пароля
                     if (cmd.equalsIgnoreCase("NO_PASS")) {
+                        conf.setSOCKET_MESSAGE("END"); //закрываю сокет-поток
                         h.sendEmptyMessage(27);
                     }
                     //сервер спрашивает пароль
                     if (cmd.equalsIgnoreCase("YES_PASS")) {
                         h.sendEmptyMessage(28);
                     }
+                    //сервер спрашивает имя героя для востановления пароля
+                    if (cmd.equalsIgnoreCase("NAME_HERO")) {
+                        h.sendEmptyMessage(29);
+                    }
+                    //сервер спрашивает лвл героя для востановления пароля
+                    if (cmd.equalsIgnoreCase("LVL_HERO")) {
+                        h.sendEmptyMessage(30);
+                    }
+                    //сервер спрашивает лвл героя для востановления пароля
+                    if (cmd.equalsIgnoreCase("DATE_BIRTH_PASS")) {
+                        h.sendEmptyMessage(31);
+                    }
+                    //сервер спрашивает лвл героя для востановления пароля
+                    if (cmd.equalsIgnoreCase("DATE_BEGIN_PASS")) {
+                        h.sendEmptyMessage(32);
+                    }
+                    //сервер передает вопросы клиенту
+                    if (cmd.equalsIgnoreCase("CHANGE_PASS")) {
+                        conf.setSOCKET_MESSAGE("WHAT_NEW_PASS");
+                    }
                     //сервер передает вопросы клиенту
                     if (cmd.equalsIgnoreCase("OK")) {
                         conf.setSOCKET_MESSAGE("NAME");
+                    }
+                    /*
+                    //сервер передает вопросы клиенту
+                    if (cmd.equalsIgnoreCase("DID_NIT_GUESS")) {
+                        h.sendEmptyMessage(34);
+                    }
+                    */
+                    //сервер говорит, что пароль не верный
+                    if (cmd.equalsIgnoreCase("ERROR_PASS")) {
+                        h.sendEmptyMessage(34);
+                    }
+                    //сервер говорит, что имя не верно
+                    if (cmd.equalsIgnoreCase("ERROR_NAME_HERO")) {
+                        h.sendEmptyMessage(30);
+                    }
+                    //сервер говорит, дата рождения не верна
+                    if (cmd.equalsIgnoreCase("ERROR_DATE_BIRTH_PASS")) {
+                        h.sendEmptyMessage(35);
+                    }
+                    //сервер говорит, дата рождения не верна
+                    if (cmd.equalsIgnoreCase("ERROR_DATE_BEGIN_PASS")) {
+                        h.sendEmptyMessage(36);
+                    }
+                    if (cmd.equalsIgnoreCase("YES_EXECUTE")) {
+                        conf.setSOCKET_MESSAGE("GET_ID_QUEST");
+                    }
+                    if (cmd.equalsIgnoreCase("YES_NEXT_EXECUTE")) {
+                        conf.setSOCKET_MESSAGE("GET_ID_QUEST");
                     }
                 }
             } catch (IOException e) {

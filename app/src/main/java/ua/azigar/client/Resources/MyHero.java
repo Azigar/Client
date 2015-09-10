@@ -12,6 +12,7 @@ public class MyHero extends Application {
     String ID; // ID-аккаунта
     String NAME;
     String LVL;
+    String PVP_LVL;
     String TITLE;
     String MAX_EXP;
     String EXP;
@@ -20,6 +21,7 @@ public class MyHero extends Application {
     String MAX_HP;
     String HP;
     String MAX_MANA;
+    String IS_MANA;
     String MANA;
     String MONEY;
     String GOLD;
@@ -28,6 +30,21 @@ public class MyHero extends Application {
     String FIRST_START;
     String SEX;
 
+    public String getIS_MANA() {
+        return IS_MANA;
+    }
+
+    public void setIS_MANA(String IS_MANA) {
+        this.IS_MANA = IS_MANA;
+    }
+
+    public String getPVP_LVL() {
+        return PVP_LVL;
+    }
+
+    public void setPVP_LVL(String PVP_LVL) {
+        this.PVP_LVL = PVP_LVL;
+    }
 
     public String getSEX() {
         return SEX;

@@ -12,6 +12,7 @@ import android.widget.TextView;
 public class Progress_mana extends TextView {
     // Максимальное значение шкалы
     private int mMaxValue = 100;
+    private int isMana;
 
     // Конструкторы
     public Progress_mana(Context context, AttributeSet attrs, int defStyle) {
@@ -27,14 +28,15 @@ public class Progress_mana extends TextView {
     }
 
     // Установка максимального значения
-    public void setMaxValue(int maxValue){
+    public void setMaxValue(int maxValue, int is_Mana){
         mMaxValue = maxValue;
+        isMana = is_Mana;
     }
 
     // Установка значения
     public synchronized void setValue(int value) {
         // Установка новой надписи
-        if (mMaxValue == 1) { //если у героя нет маны
+        if (isMana == 0) { //если у героя нет маны
             this.setText("мана 0/0");
         } else {
             this.setText("мана " + String.valueOf(value) + "/" + mMaxValue);
@@ -48,7 +50,7 @@ public class Progress_mana extends TextView {
         ClipDrawable barValue = (ClipDrawable) background.getDrawable(1);
 
         // Устанавливаем уровень шкалы
-        int newClipLevel = (int) (value * 10000 / mMaxValue);
+        int newClipLevel = (value * 10000 / mMaxValue);
         barValue.setLevel(newClipLevel);
 
         // Уведомляем об изменении Drawable

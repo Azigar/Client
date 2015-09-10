@@ -30,7 +30,7 @@ public class AvatarActivity extends ActionBarActivity {
     static Button btn_add_avatar;
     static int SEX;
     static String sex;
-    static String [] avatars = new String[18];
+    static String [] avatars;
     static final String men = "men";
     static final String women = "women";
     static String fileName, status, res, dialogMessage;
@@ -55,13 +55,13 @@ public class AvatarActivity extends ActionBarActivity {
         final MyHero app = ((MyHero) getApplicationContext());
         //пишу данные переменные сокета для отправки
         conf.setID(app.getID()); //cохраняю ID игрока
-        gold = Double.valueOf(app.getGOLD());  //cохраняю пол героя
         //читаю intent-данные от предыдущего активити)
         Intent intent = getIntent();
         sex = intent.getStringExtra("sex");  //сохраняю пол героя в переменную
         SEX = Integer.parseInt(sex);
         status = intent.getStringExtra("status");
-        ////найдем View-элементы
+        if (status.equalsIgnoreCase("CHANGE")) gold = Double.valueOf(app.getGOLD());  //cохраняю к-во голда
+        //найдем View-элементы
         btn_add_avatar = (Button) findViewById(R.id.btn_add_avatar5);
         imageView = (ImageView) findViewById(R.id.imageView5);
         //imageView.setImageResource(R.drawable.men1);
@@ -127,9 +127,15 @@ public class AvatarActivity extends ActionBarActivity {
     static void Check() {
         int count = 0;
         //если это активити вызвано для изменение аватара нового героя
-        if (status.equalsIgnoreCase("REGEN")) count = 5;
+        if (status.equalsIgnoreCase("REGEN")){
+            avatars = new String[5];
+            count = 5;
+        }
         //если это активити вызвано для изменение аватара существующего героя
-        if (status.equalsIgnoreCase("CHANGE")) count = 18;
+        if (status.equalsIgnoreCase("CHANGE")){
+            avatars = new String[18];
+            count = 18;
+        }
         for (int i = 0; i < count; i++){ // определяем массив данных для списка типа String
             avatars[i] = "Аватар - " + (i + 1);
         }

@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
 
         final String[] accn = getAccNames(); //пишу в массив все имена аакаунтов аккаунты
         if (accn.length==0) {  //если длина массива = 0 - аккаунтов нет
-            dialog = DialogScreen.getDialog(this, DialogScreen.DIALOG_REGISTERED, conf, "");
+            dialog = DialogScreen.getDialog(this, DialogScreen.DIALOG_NO_ACCOUNTS, conf, "");
             dialog.show();
         } else {  //запуск диалог для выбора аккаута
             builder = new AlertDialog.Builder(this);

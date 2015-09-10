@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="local1">Посёлок Фершемпенуаз</string>
+    <string name="local1">Посёлок Фершемпен</string>
     <string-array name="select1">
         <item>Хомутиха</item>
+        <item>Лавка</item>
         <item>Староста поселка</item>
-        <item>Колорадский жук</item>
+        <item>Надоедливая муха</item>
         <item>Мышун</item>
-        <item>Большая муха</item>
     </string-array>
 </resources>

@@ -3,7 +3,9 @@ package ua.azigar.client;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,8 +25,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import ua.azigar.client.Client.Authorization;
+import ua.azigar.client.Resources.Database;
 import ua.azigar.client.Resources.SocketConfig;
 import ua.azigar.client.Resources.DialogScreen;
 import ua.azigar.client.Resources.MyHero;
@@ -35,26 +39,37 @@ import ua.azigar.client.Resources.NoName;
  */
 public class AuthorizationActivity extends ActionBarActivity {
 
-    Handler h;
-    Intent intent;
-    Authorization authorization;
-    SocketConfig conf = new SocketConfig(); //подключаю новый екземпляр conf для клиента регистрации
-    AlertDialog dialog;
-    SharedPreferences sPref;  //подключаю экземпляр класса SharedPreferences:
+    //массивы для создания таблиц БД
+    static int[] quest, nps, nps_give, nps_get, isq, lvl, pvp, repeat;
+    static String[] name, definition, name_nps;
+    static ArrayList<Integer> taken; //массыв для хранение информации о взятых квестах
+    static ArrayList<Integer> executed; //массыв для хранение информации о выполнении взятых квестов
+
+    static Database db;
+    static ContentValues cv = new ContentValues(); // создаем объект для данных (пара: ключ - значение)
+
+    static Handler h;
+    static Intent intent;
+    static Authorization authorization;
+    static SocketConfig conf = new SocketConfig(); //подключаю новый екземпляр conf для клиента регистрации
+    static AlertDialog dialog;
+    static AlertDialog.Builder builder;
+    static DatePickerDialog tpd;
+    static SharedPreferences sPref;  //подключаю экземпляр класса SharedPreferences:
 
     final int FIRST_LIST = 0; // первый элемент списка
-    int SEX, length; //пол героя
-    String [] sex;
-    String last_local;
+    static int SEX, length; //пол героя
+    static String [] sex;
+    static String last_local;
 
     // определяем текущую дату
-    final Calendar c = Calendar.getInstance();
-    final int todayYear = c.get(Calendar.YEAR);
-    final int todayMonth = c.get(Calendar.MONTH);
-    final int todayDay = c.get(Calendar.DAY_OF_MONTH);
+    static final Calendar c = Calendar.getInstance();
+    static int todayYear;
+    static int todayMonth;
+    static int todayDay;
     int myYear, myMonth, myDay;
-    String dateBirth = "", txtDateBirth = "";
-    final int DIALOG_DATE = 1;
+    static String dateBirth = "", txtDateBirth = "";
+    final int DIALOG_DATE_BIRTH_REG = 1, DIALOG_DATE_REG_PASS = 2;
 
     static final String PREF_LOCATION = "LOCATION";
 
@@ -64,6 +79,8 @@ public class AuthorizationActivity extends ActionBarActivity {
     static ProgressBar pbConnectEnter;
     static ImageView avatar;
     static Spinner spinner;
+
+    boolean isFirst = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +97,20 @@ public class AuthorizationActivity extends ActionBarActivity {
         //подключаем лауер-файл с элементами
         setContentView(R.layout.activity_authorization);
 
+        //Подключение и работа с БД
+        db = new Database(this); //подключаю класс
+        db.open(); //поключаю БД
+        db.clearExecute(); //очищаю таблицу Выполнение квестов
+        db.clearQuests(); //очищаю таблицу Квесты
+        db.clearNPS(); //очищаю таблицу NPS
+        AddArrayQuests(); //инициализирую массивы данных для таблици Квесты
+        AddArrayNPS(); //инициализирую массивы данных для таблици NPS
+        AddTableQuests(); //заполняю таблицу Квесты
+        AddTableNPS(); //заполняю таблицу NPS
+        //инициализирую массивы
+        taken = new ArrayList<Integer>();
+        executed = new ArrayList<Integer>();
+
         final MyHero app = ((MyHero)getApplicationContext()); //подключаю глобальные переменные для хранения данных о герое
 
         //читаю intent-данные от предыдущего активити)
@@ -93,6 +124,9 @@ public class AuthorizationActivity extends ActionBarActivity {
         sPref = getSharedPreferences(PREF, Context.MODE_PRIVATE); //инициализирую SharedPreferences
         final SharedPreferences.Editor ed = sPref.edit();  //подключаю Editor для сохранение новых параметров в SharedPreferences
         last_local = sPref.getString(PREF_LOCATION, "ua.azigar.client.intent.action.LocalActivity1");
+
+        builder = new AlertDialog.Builder(this); //построитель диалогов
+
         ////найдем View-элементы
         textView1 = (TextView) findViewById(R.id.textView1);
         textView2 = (TextView) findViewById(R.id.textView2);
@@ -147,7 +181,9 @@ public class AuthorizationActivity extends ActionBarActivity {
         //подключаю Handler
         h = new Handler() {
             public void handleMessage(android.os.Message msg) {
-                String dialogMessage;
+                String dialogMessage, m;
+                builder.setCancelable(false); //Запрещаем закрывать окошко кнопкой "back"
+                builder.setIcon(android.R.drawable.ic_dialog_info); // иконка
                 switch (msg.what) {
                     case 1:  //подключение к серверу успешно
                         conf.setSOCKET_MESSAGE("ENTER");
@@ -189,16 +225,22 @@ public class AuthorizationActivity extends ActionBarActivity {
 
                     case 9:  //сервер говорит текущее к-во ОЗ героя
                         app.setHP((String) msg.obj);
+                        if(Integer.parseInt(app.getHP()) > Integer.parseInt(app.getMAX_HP())){
+                            app.setHP(app.getMAX_HP());
+                        }
                         conf.setSOCKET_MESSAGE("MAX_MANA"); //запрашиваю мак. к-во маны героя
                         break;
 
                     case 10:  //сервер говорит к-во маны героя
                         app.setMANA((String) msg.obj);
+                        if(Integer.parseInt(app.getMANA()) > Integer.parseInt(app.getMAX_MANA())){
+                            app.setMANA(app.getMAX_MANA());
+                        }
                         conf.setSOCKET_MESSAGE("MONEY"); //запрашиваю к-во монет героя
                         break;
 
                     case 11:  //сервер говорит, что нет такого акк
-                        app.setFIRST_START("1");
+                        isFirst = true;
                         ed.putString(PREF_LOCATION, "ua.azigar.client.intent.action.LocalActivity1"); //сохраняю флаг о загрузке первой локации.
                         ed.commit();
                         EnableAll(); //показываю активити регистрации
@@ -209,14 +251,13 @@ public class AuthorizationActivity extends ActionBarActivity {
                         EnableAll(); //показываю активити регистрации
                         DisableDataChecking(); //и прячу все элементы для загрузки
                         add_name_hero.setText(""); //очищаю окошко ввода имени
-                        dialogMessage = "Герой с таким именем уже существует. Пожалуйста, введите новое имя.";
+                        dialogMessage = "Герой с таким именем давно живет в Мидгарде. Пожалуйста, введите новое имя.";
                         dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_OK, conf, dialogMessage);
                         dialog.show();
                         break;
 
                     case 13:  //сервер говорит, что регестрация прошла успешно
-                        dialogMessage = "Регистрация Вашего героя прошла успешно.";
-                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_REGISTERED, conf, dialogMessage);
+                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_REGISTERED, conf, "");
                         dialog.show();
                         break;
 
@@ -232,7 +273,7 @@ public class AuthorizationActivity extends ActionBarActivity {
 
                     case 16:  //сервер прислал уровень героя
                         app.setLVL((String) msg.obj);
-                        conf.setSOCKET_MESSAGE("TITLE"); //запрашиваю звание героя
+                        conf.setSOCKET_MESSAGE("PVP_LVL"); //запрашиваю звание героя
                         break;
 
                     case 17:  //сервер прислал звание героя
@@ -253,7 +294,10 @@ public class AuthorizationActivity extends ActionBarActivity {
                     case 20:  //сервер мак. к-во мани героя
                         app.setMAX_MANA((String) msg.obj);
                         if (Integer.parseInt(app.getMAX_MANA()) == 0) {
+                            app.setIS_MANA("0");
                             app.setMAX_MANA("1");
+                        }else{
+                            app.setIS_MANA("1");
                         }
                         conf.setSOCKET_MESSAGE("MANA"); //запрашиваю к-во маны героя
                         break;
@@ -276,7 +320,7 @@ public class AuthorizationActivity extends ActionBarActivity {
 
                     case 24:  //сервер прислал аватар героя
                         app.setAVATAR((String) msg.obj);
-                        conf.setSOCKET_MESSAGE("IS_PASS"); //запрашиваю защиту паролем
+                        conf.setSOCKET_MESSAGE("EXECUTE"); //запрашиваю пройденые квесты
                         break;
 
                     case 25:  //сервер прислал подарок на праздник
@@ -292,7 +336,9 @@ public class AuthorizationActivity extends ActionBarActivity {
                         break;
 
                     case 27:  //сервер говорит, что можно входить без пароля
-                        conf.setSOCKET_MESSAGE("END"); //закрываю сокет-поток
+                        db.close();
+                        if(isFirst == true) app.setFIRST_START("1");
+                        else app.setFIRST_START("0");
                         //считываю с Preferences какая была последння локация и запускаю акктивити локации
                         intent = new Intent(last_local);
                         startActivity(intent);
@@ -300,8 +346,101 @@ public class AuthorizationActivity extends ActionBarActivity {
 
                     case 28:  //сервер спрашивает пароль
                         dialogMessage = "Введите пароль";
-                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_ENTER_PASS, conf, dialogMessage);
+                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_ENTER_PASS_AUTHOR, conf, dialogMessage);
                         dialog.show();
+                        break;
+
+                    case 29:  //сервер спрашивает имя героя
+                        dialogMessage = "Введите имя Вашего героя";
+                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_ENTER_NAME_HERO, conf, dialogMessage);
+                        dialog.show();
+                        break;
+
+                    case 30:  //сервер спрашивает уровень героя
+                        dialogMessage = "У Вашего героя другое имя";
+                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_ERROR_ENTER_DATA, conf, dialogMessage);
+                        dialog.show();
+                        break;
+
+                    case 31:  //сервер спрашивает дату рождения
+                        builder.setMessage("Укажите дату рождения"); // сообщение
+                        builder.setPositiveButton(R.string.Ok, new DialogInterface.OnClickListener() { // Кнопка Да
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                showDialog(DIALOG_DATE_REG_PASS); //запускаю DatePickerDialog
+                            }
+                        }).create().show();
+                        break;
+
+                    case 32:  //сервер спрашивает дату регистрации
+                        builder.setMessage("Укажите дату регистрации"); // сообщение
+                        builder.setPositiveButton(R.string.Ok, new DialogInterface.OnClickListener() { // Кнопка Да
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                showDialog(DIALOG_DATE_REG_PASS); //запускаю DatePickerDialog
+                            }
+                        }).create().show();
+                        break;
+
+                    case 33:  //поменял пароль
+                        String new_pass = (String) msg.obj;
+                        dialogMessage = "Ваш новый пароль: " + new_pass + ". Вы всегда можете изменить его. Для сохранения данных, будет произведен выход с игры";
+                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_NEW_PASS, conf, dialogMessage);
+                        dialog.show();
+                        break;
+
+                    case 34:  //Неугадал
+                        dialogMessage = "Не верный пароль";
+                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_ERROR_ENTER_PASS, conf, dialogMessage);
+                        dialog.show();
+                        break;
+
+                    case 35:  //Неугадал
+                        dialogMessage = "Не верно указана дата рождения";
+                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_ERROR_ENTER_DATA, conf, dialogMessage);
+                        dialog.show();
+                        break;
+
+                    case 36:  //Неугадал
+                        dialogMessage = "Не верно указана дата регистрации";
+                        dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_ERROR_ENTER_DATA, conf, dialogMessage);
+                        dialog.show();
+                        break;
+
+                    case 37:  //сервер прислал пвп-уровень героя
+                        app.setPVP_LVL((String) msg.obj);
+                        conf.setSOCKET_MESSAGE("TITLE"); //запрашиваю звание героя
+                        break;
+
+                    case 38:  //ошибка запроса
+                        Toast.makeText(AuthorizationActivity.this, R.string.error2, Toast.LENGTH_LONG).show();
+                        //этот метод перейдет в предыдущее активити и очистит весь стек над ним. И посылаем метку закрытия
+                        Intent intent = new Intent(AuthorizationActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("finish", true);
+                        startActivity(intent);
+                        break;
+
+                    case 39:  //сервер пристал ID-квеста
+                        m = (String) msg.obj;
+                        taken.add(Integer.parseInt(m));
+                        conf.setSOCKET_MESSAGE("GET_EXECUTE");
+                        break;
+
+                    case 40:  //сервер пристал флаг прохождение квеста
+                        m = (String) msg.obj;
+                        executed.add(Integer.parseInt(m));
+                        conf.setSOCKET_MESSAGE("LAST_EXECUTE");
+                        break;
+
+                    case 41:  //сервер прислал ответ на последний в списке КВЕСТ
+                        m = (String) msg.obj;
+                        if (m.equalsIgnoreCase("NO_LAST_EXECUTE")){ //если надо еще узнавать инфу о квестах
+                            conf.setSOCKET_MESSAGE("NEXT_EXECUTE");
+                        }else{
+                            AddTableExecute(); //ввожу данные в таблицу
+                            conf.setSOCKET_MESSAGE("IS_PASS");
+                        }
                         break;
                 }
             }
@@ -312,15 +451,21 @@ public class AuthorizationActivity extends ActionBarActivity {
 
     //метод, который вызывается в showDialog для создания диалога  DatePickerDialog - выбор даты
     protected Dialog onCreateDialog(int id) {
-        if (id == DIALOG_DATE) {
-            DatePickerDialog tpd = new DatePickerDialog(this, myCallBack, todayYear, todayMonth, todayDay);
-            return tpd;
+        ToDay();
+        switch (id) {
+            case DIALOG_DATE_BIRTH_REG:  //выбор даты рождения при регистрации
+                tpd = new DatePickerDialog(this, DATE_BIRTH_REG, todayYear, todayMonth, todayDay);
+                break;
+
+            case DIALOG_DATE_REG_PASS:  //выбор даты рождения при авторизации
+                tpd = new DatePickerDialog(this, DATE_REG_PASS, todayYear, todayMonth, todayDay);
+                break;
         }
-        return super.onCreateDialog(id);
+        return tpd;
     }
 
-    //обработчик интерфейса DatePickerDialog, срабатывает на нажатие кнопки ОК в диалоге
-    DatePickerDialog.OnDateSetListener myCallBack = new DatePickerDialog.OnDateSetListener() {
+    //обработчик УКАЗАТЬ ДАТУ РОЖДЕНИЯ ПРИ РЕГИСТАЦИИ, срабатывает на нажатие кнопки ОК в диалоге
+    DatePickerDialog.OnDateSetListener DATE_BIRTH_REG = new DatePickerDialog.OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int month, int day) {
             myYear = year;
             myMonth = month + 1;
@@ -346,9 +491,53 @@ public class AuthorizationActivity extends ActionBarActivity {
         }
     };
 
+    //обработчик УКАЗАТЬ ДАТУ РОЖДЕНИЯ И РЕГИСТРАЦИИ ДЛЯ ВОСТАНОВЛЕНИИ ПАРОЛЯ, срабатывает на нажатие кнопки ОК в диалоге
+    DatePickerDialog.OnDateSetListener DATE_REG_PASS = new DatePickerDialog.OnDateSetListener() {
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            myYear = year;
+            myMonth = month + 1;
+            String sMonth = String.valueOf(myMonth);
+            length = sMonth.length(); //считаю к-во символов
+            if (length == 1) {
+                sMonth = "0" + sMonth;
+            }
+            myDay = day;
+            String sDay = String.valueOf(myDay);
+            length = sDay.length(); //считаю к-во символов
+            if (length == 1) {
+                sDay = "0" + sDay;
+            }
+            String txtDate = sDay + "." + sMonth + "." + myYear;
+            final String date = myYear + "-" + sMonth + "-" + sDay;
+            builder.setCancelable(false); //Запрещаем закрывать окошко кнопкой "back"
+            builder.setIcon(android.R.drawable.ic_dialog_info); // иконка
+            builder.setMessage("Вы выбрали эту дату: " + txtDate + "?"); // сообщение
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() { // Кнопка Да
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    conf.setSOCKET_MESSAGE(date); //отправляю дату рождения
+                }
+            });
+            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() { // Кнопка Да
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showDialog(DIALOG_DATE_REG_PASS); //запускаю DatePickerDialog
+                }
+            });
+            builder.create().show();
+        }
+    };
+
     //обработчи кнопки Дата рождения
     public void onClickDialogDate(View v) {
-        showDialog(DIALOG_DATE); //запускаю DatePickerDialog
+        showDialog(DIALOG_DATE_BIRTH_REG); //запускаю DatePickerDialog
+    }
+
+    //сегодняшняя дата на диалоге выбора даты
+    private static void ToDay(){
+        todayYear = c.get(Calendar.YEAR);
+        todayMonth = c.get(Calendar.MONTH);
+        todayDay = c.get(Calendar.DAY_OF_MONTH);
     }
 
     //обработчи кнопки Создать Героя
@@ -356,11 +545,6 @@ public class AuthorizationActivity extends ActionBarActivity {
         NoName noName = new NoName();
         String dialogMessage;
         boolean isYes = true;
-        if (add_name_hero.getText().toString().equalsIgnoreCase("")){ //если не указали имя героя
-            dialogMessage = "Укажите, пожалуйста, имя нового героя";
-            dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_OK, conf, dialogMessage);
-            isYes = false;
-        }
         if (add_name_hero.getText().toString().length() > 45) { //если имя героя больше 45 символов
             dialogMessage = "Длина имени не должна привышать 45 символов";
             dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_OK, conf, dialogMessage);
@@ -368,7 +552,6 @@ public class AuthorizationActivity extends ActionBarActivity {
             add_name_hero.setText("");
         }
         if (add_pass.getText().toString().equalsIgnoreCase("") ||
-                add_pass.getText().toString().equalsIgnoreCase("Пароль") ||
                 add_pass.getText().toString().equalsIgnoreCase("END") ||
                 add_pass.getText().toString().equalsIgnoreCase("null")) { //если не ввели пароль
             dialogMessage = "Пожалуйста, введите пароль";
@@ -390,6 +573,7 @@ public class AuthorizationActivity extends ActionBarActivity {
         if (noName.NoName(add_name_hero.getText().toString()) == false){ //если имя героя совпадает с командой обмена данными
             dialogMessage = "Извините, пожалуйста, герой в Мидгарде не может иметь такое имя";
             dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_OK, conf, dialogMessage);
+            add_name_hero.setText("");
             isYes = false;
         }
         if (dateBirth.equalsIgnoreCase("")) { //если не указана дата рождения игрока
@@ -397,22 +581,21 @@ public class AuthorizationActivity extends ActionBarActivity {
             dialog = DialogScreen.getDialog(AuthorizationActivity.this, DialogScreen.DIALOG_OK, conf, dialogMessage);
             isYes = false;
         }
-        if (isYes == true) { //если все проло гладко
+        if (isYes == true) { //если все прошло гладко
             conf.setSOCKET_MESSAGE(add_name_hero.getText().toString()); //отправляю имя нового героя
-            conf.setPASS(add_name_hero.getText().toString());
+            conf.setPASS(add_pass.getText().toString());
             DisableAll(); //прячу все элементы для регистрации
             EnableDataChecking(); //показываю все элементы для загрузки
-            noName = null;
         } else {
             dialog.show();
-            noName = null;
         }
     }
 
     //обработчи кнопки Выбрать Аватар
     public void onClickAddAvatar(View v) {
+        String sex = String.valueOf(SEX);
         Intent intent = new Intent(this, AvatarActivity.class);
-        intent.putExtra("sex", SEX);
+        intent.putExtra("sex", sex);
         intent.putExtra("status", "REGEN");
         startActivityForResult(intent, 1);
     }
@@ -487,5 +670,79 @@ public class AuthorizationActivity extends ActionBarActivity {
             authorization.interrupt();
             authorization = null;
         }
+    }
+
+    // данные для таблицы Quests - Квесты
+    private static void AddArrayQuests() {
+        //Индентификатор квестов
+        quest = new int[]{ 1, 2, 3 };
+        //Название квестов
+        name = new String[]{"Знакомство", "Надоедливые мухи", "Новая сила"};
+        //после какого квеста показывать
+        isq = new int[]{ 0, 1, 0 };
+        //NPS который дает квест
+        nps_give = new int[]{ 1, 1, 1 };
+        //NPS которому сдавать квест
+        nps_get = new int[]{ 1, 1, 1 };
+        //необходимый уровень для получение квеста
+        lvl = new int[]{ 1, 1, 2 };
+        //необходимый ПвП-уровень для получение квеста
+        pvp = new int[]{ 1, 1, 1 };
+        //повторяемый (1) или нет (0)
+        repeat = new int[]{ 0, 0, 0 };
+        //описание квеста
+        definition = new String[]{"Одеть \"Тапки простолюдина\", \"Одежда простолюдина\" и \"Амулет с именем героя\"",
+                "Принести Старосте посёлка 8 убитых мух",
+                "Просто завершите квест у Старосты"};
+    }
+
+    // заполняем таблицу Quests
+    private static void AddTableQuests() {
+        for (int i = 0; i < quest.length; i++) {
+            cv.clear();
+            cv.put("quest", quest[i]);
+            cv.put("name", name[i]);
+            cv.put("isq", isq[i]);
+            cv.put("nps_give", nps_give[i]);
+            cv.put("nps_get", nps_get[i]);
+            cv.put("lvl", lvl[i]);
+            cv.put("pvp", pvp[i]);
+            cv.put("repeat", repeat[i]);
+            cv.put("definition", definition[i]);
+            db.insert("quests", cv);
+        }
+        db.LogQuests();
+    }
+
+    // данные для таблицы NPS
+    private static void AddArrayNPS() {
+        //Индентификатор NPS
+        nps = new int[]{ 1 };
+        //имя NPS
+        name_nps = new String[]{"Староста посёлка Фершемпен"};
+    }
+
+    // заполняем таблицу NPS
+    private static void AddTableNPS() {
+        for (int i = 0; i < nps.length; i++) {
+            cv.clear();
+            cv.put("nps", nps[i]);
+            cv.put("name_nps", name_nps[i]);
+            db.insert("nps", cv);
+        }
+        db.LogNPS();
+    }
+
+    // заполняю таблицу Execute
+    private static void AddTableExecute() {
+        for (int i = 0; i < taken.size(); i++) {
+            cv.clear();
+            cv.put("taken", taken.get(i));
+            cv.put("executed", executed.get(i));
+            db.insert("execute", cv);
+        }
+        taken = new ArrayList<Integer>();
+        executed = new ArrayList<Integer>();
+        db.LogExecute();
     }
 }

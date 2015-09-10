@@ -29,9 +29,10 @@ public class Healing extends Thread {
     private ProgressDialog progressDialog;
     private Activity activity;
 
-    public Healing (Handler h1, SocketConfig conf, Activity act) {  //главный
+    public Healing (Handler h1, SocketConfig con, Activity act) {  //главный
         this.h = h1;
-        this.conf = conf;
+        this.conf = con;
+        conf.setSOCKET_CONNECTED(false);
         this.activity = act;
         //создаю прогресс-далог
         progressDialog = new ProgressDialog(activity);
@@ -87,7 +88,7 @@ public class Healing extends Thread {
         threadOUT.start(); // запускаем на отправку
 
         //пока есть конект с сервером, цикл ждет приема сообщений
-        while (socket != null && socket.isConnected() && conf.getSOCKET_CONNECTED()==true && !socket.isClosed()) {
+        while (conf.getSOCKET_CONNECTED()==true) {
             Message msg = new Message();  //создаю меседж-обьект
             try {
                 //переменная для получение данных
@@ -132,9 +133,6 @@ public class Healing extends Thread {
                         msg.what = 4;//пришел ответ от сервера
                         msg.obj = cmd;
                         h.sendMessage(msg);
-                        conf.setSOCKET_CONNECTED(false);
-                        socket.close(); //закрываю сокет
-                        threadOUT.interrupt(); //закрываю второй поток
                         progressDialog.dismiss(); //закрываю диалог
                         break;
                     }
@@ -145,17 +143,14 @@ public class Healing extends Thread {
                         h.sendMessage(msg);
                     }
                     //согласен оплатить исцеление
-                    if (conf.getSOCKET_OUT() == "YES" && cmd.equalsIgnoreCase("GOOD")) {
+                    if (conf.getSOCKET_OUT() == "YES" && cmd.equalsIgnoreCase("YES_PAY")) {
                         conf.setSOCKET_MESSAGE("GET");  //спрашиваю цену за востановление
 
                     }
                     //не согласен оплатить исцеление
                     if (conf.getSOCKET_OUT() == "NO" && cmd.equalsIgnoreCase("GOOD")) {
-                        conf.setSOCKET_MESSAGE("END");
-                        conf.setSOCKET_CONNECTED(false);
-                        socket.close(); //закрываю сокет
-                        threadOUT.interrupt(); //закрываю второй поток
                         progressDialog.dismiss(); //закрываю диалог
+                        h.sendEmptyMessage(9);
                         break;
                     }
                     //сервер потверждает, что клиент ранен может оплатить исцеление
@@ -163,14 +158,16 @@ public class Healing extends Thread {
                         conf.setSOCKET_MESSAGE("PRICE");  //спрашиваю цену за востановление
 
                     }
+                    //сервер е смог ничего сделать
+                    if (cmd.equalsIgnoreCase("NO_REGEN")) {
+                        progressDialog.dismiss(); //закрываю диалог
+                        h.sendEmptyMessage(9);
+
+                    }
                     //сервер говорит, что у героя нет денег на исцеление
                     if (cmd.equalsIgnoreCase("NO_MONEY")) {
-                        h.sendEmptyMessage(5);
-                        conf.setSOCKET_MESSAGE("END");
-                        conf.setSOCKET_CONNECTED(false);
-                        socket.close(); //закрываю сокет
-                        threadOUT.interrupt(); //закрываю второй поток
                         progressDialog.dismiss(); //закрываю диалог
+                        h.sendEmptyMessage(5);
                     }
                     ////КОМАНДЫ СЕРВЕРА
                     //сервер запрашивает ID игрока

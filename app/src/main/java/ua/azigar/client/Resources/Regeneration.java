@@ -1,67 +1,51 @@
 package ua.azigar.client.Resources;
 
 import android.os.Handler;
-import android.os.Message;
-
-import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Azigar on 09.07.2015.
  * класс для регенерации.
- * каждые 2 сек. добавляет
+ * каждые 2 сек. добавляет 7 жизни или 1 маны
  */
 
 public class Regeneration extends Thread {
 
-    Handler h;
-    int MAX, FACT, VIP, WHAT, N;
-    private boolean stopped = false;
+    Timer timer;
+    int MAX, FACT, VIP, WHAT, N, seconds = 2;
+    Handler H;
 
-    public Regeneration(Handler handler, int max, int fact, int vip, int what) {
+    public Regeneration(Handler handler, int max, int fact, int vip, int what){
         this.WHAT = what;
-        if (WHAT == 1) {N = 7;} else { N = 1;}
-        this.h = handler;
+        this.H = handler;
         this.MAX = max;
         this.FACT = fact;
         this.VIP = vip;
+        //1 - реген жизни, 2 - реген маны
+        if (WHAT == 1) {N = 7;} else { N = 1;}
         if (VIP == 0) { VIP = 1; }
-        start();
+        //вешаем задание таймеру (второй аргумент - через сколько всё начнётся,
+        // а третий - интервал, каждые seconds секунд таймер будет запускать метод run())
+        timer = new Timer();
+        timer.schedule(new RemindTask(), 0, seconds * 1000);
     }
 
-    public void run() {
-        Message msg = new Message();  //создаю меседж-обьект
-
-        while (!isStopped()) {
+    class RemindTask extends TimerTask {
+        public void run() {
             if ((MAX - FACT) < (N * VIP)) {
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 FACT = FACT + (MAX - FACT);
-                h.sendEmptyMessage(FACT);
+                H.sendEmptyMessage(FACT);
             } else {
-                try {
-                    TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 FACT = FACT + (N * VIP);
-                h.sendEmptyMessage(FACT);
+                H.sendEmptyMessage(FACT);
+                if ((MAX - FACT) < (N * VIP)) seconds = 1;
             }
-            if (MAX == FACT) { MyStop (); }
+            if (MAX == FACT) { timer.cancel(); }
         }
     }
 
-    public void MyStop () {
-        setStopped(true);
-    }
-
-    public void setStopped(boolean stopped) {
-        this.stopped = stopped;
-    }
-
-    public boolean isStopped() {
-        return stopped;
+    public void MyStop() {
+        timer.cancel();
     }
 }

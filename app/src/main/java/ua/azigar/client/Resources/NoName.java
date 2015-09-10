@@ -6,13 +6,14 @@ package ua.azigar.client.Resources;
  */
 public class NoName {
 
-    static private String name;
+    private String name;
 
     public boolean NoName(String text) {
         this.name = text;
         boolean yes = true;
         if (name.equalsIgnoreCase("ENTER") ||
                 name.equalsIgnoreCase("END") ||
+                name.equalsIgnoreCase("") ||
                 name.equalsIgnoreCase("null") ||
                 name.equalsIgnoreCase("ID_PLAEYR") ||
                 name.equalsIgnoreCase("YES_HERO") ||
@@ -100,9 +101,9 @@ public class NoName {
                 name.equalsIgnoreCase("NAME_EXISTS") ||
                 name.equalsIgnoreCase("NO_BIRTHDAY") ||
                 name.equalsIgnoreCase("NO_HOLIDAY") ||
-                name.equalsIgnoreCase("NO_BOUNTY")){
+                name.equalsIgnoreCase("NO_BOUNTY")) {
             yes = false;
         }
-        return false;
+        return yes;
     }
 }

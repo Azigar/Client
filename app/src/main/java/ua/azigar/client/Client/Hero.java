@@ -25,9 +25,10 @@ public class Hero extends Thread {
     Handler h;
     SocketConfig conf;
 
-    public Hero (Handler h1, SocketConfig conf) {
+    public Hero (Handler h1, SocketConfig con) {
         this.h = h1;
-        this.conf = conf;
+        this.conf = con;
+        conf.setSOCKET_CONNECTED(false);
         start();
     }
     public void run() {

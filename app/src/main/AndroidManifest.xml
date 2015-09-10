@@ -21,6 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".FightActivity"
             android:label="@string/Fight"
@@ -31,6 +32,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".AuthorizationActivity"
             android:icon="@mipmap/ic_launcher"
@@ -42,6 +44,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".Location.LocalActivity1"
             android:icon="@mipmap/ic_launcher"
@@ -53,6 +56,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".HeroActivity"
             android:screenOrientation="landscape" >
@@ -62,6 +66,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".AvatarActivity"
             android:label="@string/title_activity_avatar"
@@ -71,13 +76,63 @@
             android:name=".SettingActivity"
             android:label="@string/setting"
             android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="ua.azigar.client.intent.action.SettingActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
+
+        <activity
+            android:name=".InventarActivity"
+            android:label="@string/inventar"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="ua.azigar.client.intent.action.InventarActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ShopActivity"
+            android:label="@string/shop"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="ua.azigar.client.intent.action.ShopActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".OpponentActivity"
             android:screenOrientation="landscape"
             android:label="@string/title_activity_opponent" >
             <intent-filter>
                 <action android:name="ua.azigar.client.intent.action.OpponentActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".QuestActivity"
+            android:screenOrientation="landscape"
+            android:label="@string/title_activity_quest" >
+            <intent-filter>
+                <action android:name="ua.azigar.client.intent.action.QuestActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".QuestsActivity"
+            android:screenOrientation="landscape"
+            android:label="@string/title_activity_quests" >
+            <intent-filter>
+                <action android:name="ua.azigar.client.intent.action.QuestsActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

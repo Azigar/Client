@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +29,7 @@ import java.util.Random;
 
 import ua.azigar.client.Client.ExitGame;
 import ua.azigar.client.Client.Healing;
+import ua.azigar.client.Resources.Database;
 import ua.azigar.client.Resources.SocketConfig;
 import ua.azigar.client.MainActivity;
 import ua.azigar.client.R;
@@ -37,23 +40,25 @@ import ua.azigar.client.Resources.Progress_hp;
 import ua.azigar.client.Resources.Progress_mana;
 import ua.azigar.client.Resources.Progress_pvp;
 import ua.azigar.client.Resources.Regeneration;
-import ua.azigar.client.SettingActivity;
 
 /**
  * Created by Azigar on 08.07.2015.
  */
 public class LocalActivity1 extends ActionBarActivity {
 
-    Handler h_hp, h_mana, h_exit, h_healing;
-    AlertDialog.Builder builder;
-    SocketConfig conf = new SocketConfig(); //подключаю новый екземпляр conf для клиента регистрации
-    Intent intent;
-    AlertDialog dialog;
-    Regeneration regeneration_hp, regeneration_mana;
-    SharedPreferences sPref;  //подключаю экземпляр класса SharedPreferences:
+    final String LOG_TAG = "myLogs";
+
+    static Database db;
+    static Handler h_hp, h_mana, h_exit, h_healing;
+    static AlertDialog.Builder builder;
+    static SocketConfig conf = new SocketConfig(); //подключаю новый екземпляр conf для клиента регистрации
+    static Intent intent;
+    static AlertDialog dialog;
+    static Regeneration regeneration_hp, regeneration_mana;
+    static SharedPreferences sPref;  //подключаю экземпляр класса SharedPreferences:
     final String LOCATION = "ua.azigar.client.intent.action.LocalActivity1";
     static final String PREF_LOCATION = "LOCATION";
-    String dialogMessage = "";
+    static String dialogMessage = "";
 
     static TextView txtNameHero, txtTitle, txtMoney, txtGold, data_checking;
     static Progress_hp hpHero;
@@ -71,11 +76,13 @@ public class LocalActivity1 extends ActionBarActivity {
     final int speak = R.drawable.speak2;
     final int go = R.drawable.go;
     final int atk = R.drawable.atk;
+    final int shop = R.drawable.shop;
+    final int newQuest = R.drawable.new_quest1;
     //массивы для списка
-    String [] selection;
-    int [] values;
+    String [] selection, nameQuest;
+    int [] values, idQuest;
 
-    int money, lvl;
+    int money, lvl, countNewQuest, countQuest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +96,14 @@ public class LocalActivity1 extends ActionBarActivity {
         setContentView(R.layout.activity_local1);
         //подключаю глобальные переменные для хранения данных о герое
         final MyHero app = ((MyHero)getApplicationContext());
+        Log.d(LOG_TAG, "Первый запуск - " + app.getFIRST_START());
+
+        //Подключение и работа с БД
+        db = new Database(this); //подключаю класс
+        db.open(); //поключаю БД
+        countNewQuest = db.getCountNewQuests("1", app.getLVL(), app.getPVP_LVL()); //узнаю наличие новых квестов
+        db.close();
+
         //пишу активную локацию в Preferences
         final String PREF = app.getID(); // это будет имя файла настроек
         sPref = getSharedPreferences(PREF, Context.MODE_PRIVATE); //инициализирую SharedPreferences
@@ -102,8 +117,12 @@ public class LocalActivity1 extends ActionBarActivity {
         conf.setHP(app.getHP()); //сохраняю к-во ОЗ героя
         conf.setMAX_HP(app.getMAX_HP()); //сохраняю мак. к-во ОЗ героя
         conf.setMAX_MANA(app.getMAX_MANA()); //сохраняю мак. к-во маны героя
+        conf.setIS_MANA(app.getIS_MANA()); //сохраняю длаг о наличии магии у героя
         this.money = Integer.parseInt(app.getMONEY());
         this.lvl = Integer.parseInt(app.getLVL());
+
+        builder = new AlertDialog.Builder(this);
+
         //инициализирую обьекты
         pbConnect = (ProgressBar) findViewById(R.id.pbConnect);
         data_checking = (TextView) findViewById(R.id.data_checking);
@@ -121,7 +140,7 @@ public class LocalActivity1 extends ActionBarActivity {
             hpHero.setMaxValue(Integer.parseInt(app.getMAX_HP()));
             hpHero.setValue(Integer.parseInt(app.getHP()));
         manaHero = (Progress_mana) findViewById(R.id.manaHero);
-            manaHero.setMaxValue(Integer.parseInt(app.getMAX_MANA()));
+            manaHero.setMaxValue(Integer.parseInt(app.getMAX_MANA()), Integer.parseInt(app.getIS_MANA()));
             manaHero.setValue(Integer.parseInt(app.getMANA()));
         expHero = (Progress_exp) findViewById(R.id.expHero);
             expHero.setMaxValue(Integer.parseInt(app.getMAX_EXP()));
@@ -138,7 +157,7 @@ public class LocalActivity1 extends ActionBarActivity {
         // определяем массив данных для списка типа String
         selection = getResources().getStringArray(R.array.select1);
         // определяем массив данных для списка типа int
-        values = new int[]{1, 2, 3, 3, 3}; //выбор действия (1-пойти, 2-говорить, 3-атаковать)
+        values = new int[]{1, 4, 2, 3, 3, 3}; //выбор действия (1-пойти, 2-говорить, 3-атаковать, 4 - магазин)
         // упаковываем данные в понятную для адаптера структуру
         ArrayList <HashMap<String, Object>> select = new ArrayList<HashMap<String,Object>>();
         HashMap<String, Object> m;
@@ -148,8 +167,11 @@ public class LocalActivity1 extends ActionBarActivity {
             int img = 0;
             switch (values[i]) {
                 case 1:   img = go;     break;
-                case 2:   img = speak;  break;
+                case 2:
+                    if(countNewQuest > 0) img = newQuest;
+                    else img = speak;   break;
                 case 3:   img = atk;    break;
+                case 4:   img = shop;   break;
             }
             m.put(LIST_IMAGE, img); //картинка
             select.add(m);
@@ -168,27 +190,87 @@ public class LocalActivity1 extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+                Cursor c;
+                db.open(); //поключаю БД
                 switch (position) {
+                    //пойти
                     case 0:
                         Toast.makeText(getApplicationContext(), selection[position], Toast.LENGTH_SHORT).show();
                         break;
 
+                    //магазин
                     case 1:
-                        Toast.makeText(getApplicationContext(), selection[position], Toast.LENGTH_SHORT).show();
+                        //определяю, пройден ли нужный квест (Надоедливые мухи)
+                        countQuest = db.getIsQuest("2");
+                        if(countQuest == 0){ //если этот квест не пройден
+                            dialog = DialogScreen.getDialog(LocalActivity1.this, DialogScreen.DIALOG_OK, conf, NoShop());
+                            dialog.show();
+                        } else {
+                            StopRegen(); //принудительно закрываю потоки на реген
+                            intent = new Intent("ua.azigar.client.intent.action.ShopActivity");
+                            intent.putExtra("idShop", "1"); //передаю параметром текущее значение ОЗ и маны
+                            intent.putExtra("nameShop", selection[position]);
+                            startActivity(intent);
+                        }
                         break;
 
+                    //NPS
                     case 2:
-                        SickHeroPvE(app.getHP(), app.getMAX_HP(), "1", "1", "45", "0", selection[position], "bot_1", "1");
+                        StopRegen(); //принудительно закрываю потоки на реген
+                        final String NPS = "1";  //код Старосты посёлка
+                        //к-во квестов которые может дать или которые можно сдать
+                        countQuest = db.getCountQuests(NPS, app.getLVL(), app.getPVP_LVL());
+                        if(countQuest > 0){ //если есть такие квесты у этого NPS
+                            //ID и название квестов которые может дать или которые можно сдать этому NPS;
+                            c = db.getCursorQuests(NPS, app.getLVL(), app.getPVP_LVL());
+                            //запись из курсора в массив
+                            nameQuest = new String[countQuest];
+                            idQuest = new int[countQuest];
+                            if (c.moveToFirst()) { //стаю на первую строку курсора
+                                for (int i = 0; i < countQuest; i++){
+                                    idQuest[i] = c.getInt(c.getColumnIndex("quest"));
+                                    nameQuest[i] = c.getString(c.getColumnIndex("name"));
+                                    c.moveToNext(); //+1 строка
+                                }
+                            }
+                            c.close();
+                            //создаю диалог с выбором квеста на основе массива названий квестов
+                            builder = new AlertDialog.Builder(LocalActivity1.this);
+                            builder.setTitle("Выберите задание"); // заголовок для диалога
+                            builder.setItems(nameQuest, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int item) {
+                                    db.open(); //поключаю БД
+                                    //проверяю выбранный квест - новый или уже взят на выполнение (что бы сдать или от него отказатся)
+                                    int isNew = db.getIsNewQuest(String.valueOf(idQuest[item]));
+                                    db.close();
+                                    intent = new Intent("ua.azigar.client.intent.action.QuestActivity");
+                                    intent.putExtra("isNew", isNew);
+                                    intent.putExtra("idQuest", idQuest[item]);
+                                    intent.putExtra("nps", NPS);
+                                    startActivity(intent);
+                                }
+                            });
+                            builder.setCancelable(false);
+                            builder.create().show();
+                        }else{
+                            dialog = DialogScreen.getDialog(LocalActivity1.this, DialogScreen.DIALOG_OK, conf, NoQuests());
+                            dialog.show();
+                        }
                         break;
 
+                    //BOT
                     case 3:
-                        SickHeroPvE(app.getHP(), app.getMAX_HP(), "2", "1", "50", "0", selection[position], "bot_2", "1");
+                        SickHeroPvE(app.getHP(), app.getMAX_HP(), "1", "1", "20", "1", selection[position], "bot_1", "2");
                         break;
 
+                    //BOT
                     case 4:
-                        SickHeroPvE(app.getHP(), app.getMAX_HP(), "4", "1", "35", "0", selection[position], "bot_4", "2");
+                        SickHeroPvE(app.getHP(), app.getMAX_HP(), "2", "1", "50", "1", selection[position], "bot_2", "1");
                         break;
+
                 }
+                db.close();
             }
         });
 
@@ -202,10 +284,12 @@ public class LocalActivity1 extends ActionBarActivity {
                 conf.setHP(app.getHP());
             }
         };
-        if (Integer.parseInt(app.getHP()) < Integer.parseInt(app.getMAX_HP())) {
+        /*if (Integer.parseInt(app.getHP()) < Integer.parseInt(app.getMAX_HP())) {
             regeneration_hp = new Regeneration(h_hp, Integer.parseInt(app.getMAX_HP()),
                     Integer.parseInt(app.getHP()), Integer.parseInt(app.getVIP()), 1); //запуск регенерации
-        }
+        }*/
+
+
 
         //ханлер для прогрессБара на ману
         h_mana = new Handler() {
@@ -215,11 +299,11 @@ public class LocalActivity1 extends ActionBarActivity {
                 conf.setMANA(app.getMANA());
             }
         };
-        if (Integer.parseInt(app.getMANA()) < Integer.parseInt(app.getMAX_MANA()) &&
-                Integer.parseInt(app.getMAX_MANA()) > 1) {
+        /*if (Integer.parseInt(app.getMANA()) < Integer.parseInt(app.getMAX_MANA()) &&
+                Integer.parseInt(app.getIS_MANA()) == 1) { //если мана меньше мак. и герой владеет магией
             regeneration_mana = new Regeneration(h_mana, Integer.parseInt(app.getMAX_MANA()),
                     Integer.parseInt(app.getMANA()), Integer.parseInt(app.getVIP()), 0); //запуск регенерации
-        }
+        }*/
 
         //ханлер для процесса коректного выхода с игры
         h_exit = new Handler() {
@@ -265,27 +349,27 @@ public class LocalActivity1 extends ActionBarActivity {
 
                     case 4:
                         app.setGOLD((String) msg.obj);
-                        conf.setSOCKET_MESSAGE("END"); //закрываю активити боя
-                        //обновляюктивити
-                        Reload();
+                        conf.setSOCKET_MESSAGE("END");
+                        Reload(); //обновляю активити
                         break;
 
-                    case 5:
+                    case 5: //сервер говорит к-во голда героя
                         dialogMessage = "Боги не слишат тебя";
-                        dialog = DialogScreen.getDialog(LocalActivity1.this, DialogScreen.DIALOG_OK, conf, dialogMessage);
-                        dialog.show();
-                        if (Integer.parseInt(app.getHP()) < Integer.parseInt(app.getMAX_HP())) {
-                            regeneration_hp = new Regeneration(h_hp, Integer.parseInt(app.getMAX_HP()),
-                                    Integer.parseInt(app.getHP()), Integer.parseInt(app.getVIP()), 1); //запуск регенерации
-                        }
-                        if (Integer.parseInt(app.getMANA()) < Integer.parseInt(app.getMAX_MANA()) &&
-                                Integer.parseInt(app.getMAX_MANA()) > 1) {
-                            regeneration_mana = new Regeneration(h_mana, Integer.parseInt(app.getMAX_MANA()),
-                                    Integer.parseInt(app.getMANA()), Integer.parseInt(app.getVIP()), 0); //запуск регенерации
-                        }
+                        builder = new AlertDialog.Builder(LocalActivity1.this);
+                        builder.setCancelable(false); //Запрещаем закрывать окошко кнопкой "back"
+                        builder.setMessage(dialogMessage); // сообщение
+                        builder.setPositiveButton(R.string.Ok, new DialogInterface.OnClickListener() { // Кнопка Да
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Regen(Integer.parseInt(app.getHP()), Integer.parseInt(app.getMAX_HP()),
+                                        Integer.parseInt(app.getMANA()), Integer.parseInt(app.getMAX_MANA()),
+                                        Integer.parseInt(app.getVIP()), Integer.parseInt(app.getIS_MANA()));
+                            }
+                        })
+                        .create().show();
                         break;
 
-                    case 6:
+                    case 6: //сервер говорит к-во моней героя
                         app.setMONEY((String) msg.obj);
                         conf.setSOCKET_MESSAGE("GOLD"); //запрашиваю к-во голда у героя
                         break;
@@ -299,14 +383,102 @@ public class LocalActivity1 extends ActionBarActivity {
                         app.setMANA((String) msg.obj);
                         conf.setSOCKET_MESSAGE("MONEY"); //запрашиваю к-во монет героя
                         break;
+
+                    case 9:   //отказался оплачивать за реген
+                        conf.setSOCKET_MESSAGE("END");
+                        //заново запускаю реген
+                        Regen(Integer.parseInt(app.getHP()), Integer.parseInt(app.getMAX_HP()),
+                                Integer.parseInt(app.getMANA()), Integer.parseInt(app.getMAX_MANA()),
+                                Integer.parseInt(app.getVIP()), Integer.parseInt(app.getIS_MANA()));
+                        break;
                 }
             }
         };
+        if(Integer.parseInt(app.getFIRST_START()) == 1) {  //если это первый запуск игры и новый игрок
+            app.setFIRST_START("0");
+            intent = new Intent("ua.azigar.client.intent.action.QuestActivity");
+            intent.putExtra("isNew", 0);  //новый квест
+            intent.putExtra("idQuest", 1);  //квест Знакомство
+            intent.putExtra("nps", 1);  //NPS - Староста
+            startActivity(intent);
+        }
+        else {
+            //если есть новый квест, то будет сообщение
+            if (countNewQuest > 0)
+                Toast.makeText(LocalActivity1.this, NewQuests(), Toast.LENGTH_LONG).show();
+        }
+        Regen(Integer.parseInt(app.getHP()), Integer.parseInt(app.getMAX_HP()),
+                Integer.parseInt(app.getMANA()), Integer.parseInt(app.getMAX_MANA()),
+                    Integer.parseInt(app.getVIP()), Integer.parseInt(app.getIS_MANA()));
+    }
+
+    private static void Regen(int hp, int max_hp, int mana, int max_mana, int vip, int is_mana) {
+        if (hp < max_hp) {
+            regeneration_hp = new Regeneration(h_hp, max_hp, hp, vip, 1); //запуск регенерации жизни
+        }
+        if ((mana < max_mana) && is_mana == 1) { //если мана меньше мак. и герой владеет магией
+            regeneration_mana = new Regeneration(h_mana, max_mana, mana, vip, 2); //запуск регенерации маны
+        }
+    }
+
+    //текстовка - Магазин закрыт
+    private String NoShop() {
+        String message = "";
+        int txt = randTxt();
+        switch (txt) {
+            case 1:
+                message = "Здесь не место чужакам!";
+                break;
+            case 2:
+                message = "У меня закрыто!";
+                break;
+            case 3:
+                message = "Никого нет!";
+                break;
+        }
+        return message;
+    }
+
+    //текстовка - нет новых квестов
+    private String NoQuests() {
+        String message = "";
+        int txt = randTxt();
+        switch (txt) {
+            case 1:
+                message = "Ты не видишь, что я занят?";
+                break;
+            case 2:
+                message = "Мне нечего тебе сказать.";
+                break;
+            case 3:
+                message = "Сейчас у меня нет для тебя работы.";
+                break;
+        }
+        return message;
+    }
+
+    //текстовка о новом квесте
+    private String NewQuests() {
+        String message = "";
+        int txt = randTxt();
+        switch (txt) {
+            case 1:
+                message = "Староста хочет с тобой поговорить.";
+                break;
+            case 2:
+                message = "У Старосты для тебя есть новое задание.";
+                break;
+            case 3:
+                message = "Поговори со Старостой.";
+                break;
+        }
+        return message;
     }
 
     //метод для рестарта активити
     private void Reload() {
-        Intent intent = getIntent();
+        Log.d(LOG_TAG, "----РЕФРЕШ АКТИВИТИ ---- ");
+        intent = getIntent();
         overridePendingTransition(0, 0);//4
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);//5
         finish();//6
@@ -342,6 +514,7 @@ public class LocalActivity1 extends ActionBarActivity {
         if (Integer.parseInt(HP) < Integer.parseInt(MAX_HP)) { //если здоровья меньше мак. к-ва, то
             builder = new AlertDialog.Builder(this);
             builder.setIcon(android.R.drawable.ic_dialog_info); // иконка
+            builder.setCancelable(false); //Запрещаем закрывать окошко кнопкой "back"
             builder.setMessage(R.string.Pleayer_sick); // сообщение
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() { // Кнопка Да
                 @Override
@@ -425,6 +598,12 @@ public class LocalActivity1 extends ActionBarActivity {
 
                 return true;
 
+            case R.id.Quests:
+                StopRegen(); //принудительно закрываю потоки на реген
+                intent = new Intent("ua.azigar.client.intent.action.QuestsActivity");
+                startActivity(intent);
+                return true;
+
             case R.id.Hero:
                 StopRegen(); //принудительно закрываю потоки на реген
                 intent = new Intent("ua.azigar.client.intent.action.HeroActivity");
@@ -432,48 +611,63 @@ public class LocalActivity1 extends ActionBarActivity {
                 return true;
 
             case R.id.Invent:
-
+                StopRegen(); //принудительно закрываю потоки на реген
+                intent = new Intent("ua.azigar.client.intent.action.InventarActivity");
+                intent.putExtra("hp", conf.getHP()); //передаю параметром текущее значение ОЗ и маны
+                intent.putExtra("mana", conf.getMANA());
+                startActivity(intent);
                 return true;
 
             case R.id.PvP:
-                if ((money * lvl) >= (100 * lvl)) { //если достаточно денег для ПвП-боя
-                    if (Integer.parseInt(conf.getHP()) < Integer.parseInt(conf.getMAX_HP())) { //если здоровья меньше мак. к-ва, то
-                        builder = new AlertDialog.Builder(this);
-                        builder.setIcon(android.R.drawable.ic_dialog_info); // иконка
-                        builder.setMessage(R.string.Pleayer_sick2); // сообщение
-                        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() { // Кнопка Да
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                StopRegen(); //принудительно закрываю потоки на реген
-                                intent = new Intent("ua.azigar.client.intent.action.OpponentActivity");
-                                startActivity(intent);
-                            }
-                        });
-                        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() { // Кнопка НЕТ
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss(); // Отпускает диалоговое окно
-                            }
-                        }).create().show();
-                    } else {
-                        intent = new Intent("ua.azigar.client.intent.action.OpponentActivity");
-                        startActivity(intent);
-                    }
-                }else{
-                    dialogMessage = "Недостаточно монег для проведения ПвП-боя.";
+                if(lvl < 3) { //ПвП доступен с 3-го уровня
+                    dialogMessage = "ПвП-бои доступны с 3-го уровня.";
                     dialog = DialogScreen.getDialog(LocalActivity1.this, DialogScreen.DIALOG_OK, conf, dialogMessage);
                     dialog.show();
+                }else {
+                    if ((money * lvl) >= (100 * lvl)) { //если достаточно денег для ПвП-боя
+                        if (Integer.parseInt(conf.getHP()) < Integer.parseInt(conf.getMAX_HP())) { //если здоровья меньше мак. к-ва, то
+                            builder.setIcon(android.R.drawable.ic_dialog_info); // иконка
+                            builder.setMessage(R.string.Pleayer_sick2); // сообщение
+                            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() { // Кнопка Да
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    StopRegen(); //принудительно закрываю потоки на реген
+                                    intent = new Intent("ua.azigar.client.intent.action.OpponentActivity");
+                                    startActivity(intent);
+                                }
+                            });
+                            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() { // Кнопка НЕТ
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss(); // Отпускает диалоговое окно
+                                }
+                            }).create().show();
+                        } else {
+                            intent = new Intent("ua.azigar.client.intent.action.OpponentActivity");
+                            startActivity(intent);
+                        }
+                    } else {
+                        dialogMessage = "Недостаточно монет для проведения ПвП-боя.";
+                        dialog = DialogScreen.getDialog(LocalActivity1.this, DialogScreen.DIALOG_OK, conf, dialogMessage);
+                        dialog.show();
+                    }
                 }
                 return true;
 
             case R.id.Settings:
-                Intent intent = new Intent(this, SettingActivity.class);
+                StopRegen(); //принудительно закрываю потоки на реген
+                intent = new Intent("ua.azigar.client.intent.action.SettingActivity");
                 startActivity(intent);
                 return true;
 
             case R.id.Regen:
+                Log.d(LOG_TAG, "Поточное значение HP - " + conf.getHP());
+                Log.d(LOG_TAG, "Максимальное значение HP - " + conf.getMAX_HP());
+                Log.d(LOG_TAG, "Поточное значение MANA - " + conf.getMANA());
+                Log.d(LOG_TAG, "Максимальное значение MANA - " + conf.getMAX_MANA());
                 if (Integer.parseInt(conf.getHP()) < Integer.parseInt(conf.getMAX_HP()) ||
-                        Integer.parseInt(conf.getMANA()) < Integer.parseInt(conf.getMAX_MANA())) {
+                        (Integer.parseInt(conf.getMANA()) < Integer.parseInt(conf.getMAX_MANA()) &&
+                                Integer.parseInt(conf.getIS_MANA()) == 1)) {
                     StopRegen(); //принудительно закрываю потоки на реген
                     new Healing(h_healing, conf, this); //запускаю процесс востановление
                 } else {
@@ -488,8 +682,8 @@ public class LocalActivity1 extends ActionBarActivity {
                 return true;
 
             case R.id.Exit:
-                builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.exit);
+                builder.setCancelable(false); //Запрещаем закрывать окошко кнопкой "back"
                 builder.setMessage(R.string.qExit); // сообщение
                 builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() { // Кнопка ОК
                     @Override
@@ -517,12 +711,10 @@ public class LocalActivity1 extends ActionBarActivity {
     private void StopRegen(){
         if (regeneration_hp != null) {
             regeneration_hp.MyStop();
-            regeneration_hp.interrupt(); //закрываю поток на востановление
             regeneration_hp = null;
         }
         if (regeneration_mana != null) {
             regeneration_mana.MyStop();
-            regeneration_mana.interrupt(); //закрываю поток на востановление
             regeneration_mana = null;
         }
     }

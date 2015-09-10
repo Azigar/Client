@@ -25,9 +25,10 @@ public class NewGame extends Thread {
     SocketConfig conf;
     Handler h;
 
-    public NewGame(Handler h1, SocketConfig conf) {  //главный
+    public NewGame(Handler h1, SocketConfig con) {  //главный
         this.h = h1;
-        this.conf = conf;
+        this.conf = con;
+        conf.setSOCKET_CONNECTED(false);
         start();
     }
 
@@ -94,6 +95,7 @@ public class NewGame extends Thread {
                         conf.setSOCKET_CONNECTED(false);
                         threadOUT.interrupt(); //закрываю второй поток
                         socket.close(); //закрываю сокет
+                        h.sendEmptyMessage(8);
                         break;
                     }
                     ////КОМАНДЫ СЕРВЕРА
@@ -116,6 +118,10 @@ public class NewGame extends Thread {
                     //сервер спрашивает пароль
                     if (cmd.equalsIgnoreCase("YES_PASS")) {
                         h.sendEmptyMessage(5);
+                    }
+                    //не верный пароль
+                    if (cmd.equalsIgnoreCase("ERROR_PASS")) {
+                        h.sendEmptyMessage(9);
                     }
                 }
             } catch (IOException e) {

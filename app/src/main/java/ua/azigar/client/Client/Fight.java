@@ -168,6 +168,12 @@ public class Fight extends Thread {
                         msg.obj = cmd;
                         h.sendMessage(msg);
                     }
+                    //запрашиваю новый уровень
+                    if (conf.getSOCKET_OUT() == "PVP_LVL") {
+                        msg.what = 27; //пришел ответ от сервера
+                        msg.obj = cmd;
+                        h.sendMessage(msg);
+                    }
                     //запрашиваю новое звание
                     if (conf.getSOCKET_OUT() == "TITLE") {
                         msg.what = 13;//пришел ответ от сервера
@@ -233,6 +239,7 @@ public class Fight extends Thread {
                         msg.what = 23;//пришел ответ от сервера
                         msg.obj = cmd;
                         h.sendMessage(msg);
+                        conf.setSOCKET_MESSAGE("END"); //закрываю сокет-поток
                     }
                     //запрашиваю стоимость исцеление
                     if (conf.getSOCKET_OUT() == "PRICE") {

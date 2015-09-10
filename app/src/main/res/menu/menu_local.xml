@@ -8,20 +8,31 @@
         android:orderInCategory="1"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/Hero"
-        android:title="@string/Hero"
-        android:orderInCategory="4"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/Invent"
-        android:title="@string/invent"
-        android:orderInCategory="3"
-        app:showAsAction="never"/>
-    <item
         android:id="@+id/PvP"
         android:title="@string/PvP"
         android:orderInCategory="2"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/Hero"
+        android:title="@string/Hero"
+        android:orderInCategory="3"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/Invent"
+        android:title="@string/invent"
+        android:orderInCategory="4"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/Quests"
+        android:title="@string/quest"
+        android:orderInCategory="5"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/Regen"
+        android:title="@string/regen"
+        android:orderInCategory="6"
+        app:showAsAction="never"/>
+
     <item
         android:id="@+id/Settings"
         android:title="@string/settings"
@@ -36,10 +47,5 @@
         android:id="@+id/Exit"
         android:title="@string/Exit"
         android:orderInCategory="100"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/Regen"
-        android:title="@string/regen"
-        android:orderInCategory="5"
         app:showAsAction="never"/>
 </menu>

@@ -177,8 +177,8 @@ public class OpponentActivity extends ActionBarActivity {
                     case 13:  //получил силу героя
                         m = (String) msg.obj;
                         str.setText(m);
-                        int min = (int) (Integer.parseInt(m) / 3);
-                        int max = (int) (Integer.parseInt(m) + (Integer.parseInt(m) / 3));
+                        int min = (int) (Integer.parseInt(m) / 5);
+                        int max = (int) (Integer.parseInt(m) + (Integer.parseInt(m) / 10));
                         min_uron.setText(String.valueOf(min));
                         max_uron.setText(String.valueOf(max));
                         conf.setSOCKET_MESSAGE("DEX");
@@ -410,10 +410,10 @@ public class OpponentActivity extends ActionBarActivity {
         DisableLoad(); //прячу обьекты закрузки
     }
 
-    //когда все данные загрузились
+    //когда начинается загрузка загрузились
     static void Disable() {
-        DisableAll();  //показываю все обьекты
-        EnableLoad(); //прячу обьекты закрузки
+        DisableAll();  //прячу все обьекты
+        EnableLoad(); //показываю обьекты закрузки
     }
 
     //обработка кнопки назад

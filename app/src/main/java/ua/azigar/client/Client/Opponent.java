@@ -25,9 +25,10 @@ public class Opponent extends Thread {
     Handler h;
     SocketConfig conf;
 
-    public Opponent (Handler h1, SocketConfig conf) {
+    public Opponent (Handler h1, SocketConfig con) {
         this.h = h1;
-        this.conf = conf;
+        this.conf = con;
+        conf.setSOCKET_CONNECTED(false);
         start();
     }
     public void run() {

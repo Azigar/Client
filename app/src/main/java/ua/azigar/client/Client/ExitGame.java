@@ -2,6 +2,7 @@ package ua.azigar.client.Client;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,9 +26,10 @@ public class ExitGame extends Thread {
     SocketConfig conf;
     Handler h;
 
-    public ExitGame(Handler h1, SocketConfig conf) {  //главный
+    public ExitGame(Handler h1, SocketConfig con) {  //главный
         this.h = h1;
-        this.conf = conf;
+        this.conf = con;
+        conf.setSOCKET_CONNECTED(false);
         start();
     }
 

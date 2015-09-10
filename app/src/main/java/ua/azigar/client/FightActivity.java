@@ -43,7 +43,7 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
     String id_Enemy, name_Enemy, hp_Enemy, mana_Enemy, lvl_Enemy, avatar_Enemy, sex_Enemy; //стати противника
 
     static Timer timer;
-    static int time = 0;
+    static int time = 0, isMana_Enemy;
     String dialogMessage = "";
 
     //переменные для элементов
@@ -77,9 +77,8 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
         this.name_Enemy = intent.getStringExtra("name");
         this.avatar_Enemy = intent.getStringExtra("avatar");
         this.mana_Enemy = intent.getStringExtra("mana");
-           if (Integer.parseInt(mana_Enemy) == 0) {
-               mana_Enemy = "1";
-           }
+           if (Integer.parseInt(mana_Enemy) == 0) isMana_Enemy = 0;
+            else isMana_Enemy = 1;
         this.sex_Enemy = intent.getStringExtra("sex");
         //подключаю глобальные переменные для хранения данных о герое
         final MyHero app = ((MyHero)getApplicationContext());
@@ -120,10 +119,10 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
         hpEnemy.setMaxValue(Integer.parseInt(hp_Enemy));
             hpEnemy.setValue(Integer.parseInt(hp_Enemy));
         manaHero = (Progress_mana) findViewById(R.id.manaHero1);
-        manaHero.setMaxValue(Integer.parseInt(app.getMAX_MANA()));
+            manaHero.setMaxValue(Integer.parseInt(app.getMANA()), Integer.parseInt(app.getIS_MANA()));
             manaHero.setValue(Integer.parseInt(app.getMANA()));
         manaEnemy = (Progress_mana) findViewById(R.id.manaHero2);
-        manaEnemy.setMaxValue(Integer.parseInt(mana_Enemy));
+            manaEnemy.setMaxValue(Integer.parseInt(mana_Enemy), isMana_Enemy);
             manaEnemy.setValue(Integer.parseInt(mana_Enemy));
         imgEnemy = (ImageView) findViewById(R.id.imgEnemy);
             imgEnemy.setImageResource(getResources().getIdentifier(avatar_Enemy, "drawable", getPackageName()));
@@ -143,7 +142,7 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
 
         h = new Handler() {
             Thread t;
-            String cmd;
+            String cmd, coment;
             public void handleMessage(android.os.Message msg) {
                 switch (msg.what) {
                     case 1:  //подключение к серверу успешно
@@ -204,7 +203,8 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
                             t.start();
                             pbConnect.setVisibility(View.VISIBLE);  //включаю прогрессБар
                         }else{
-                            СomentFight.setText("" + msg.obj); //комент
+                            coment = СomentFight.getText().toString(); //сохраняю старый комент
+                            СomentFight.setText(cmd + "\n" + coment); //комент
                             txtHod(name_Enemy); // Вывести что ход соперника
                             OpenBtnDef(); // включить кнопки на защиту
                             pbConnect.setVisibility(View.GONE); //выключаю прогрессБар
@@ -235,14 +235,14 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
                             conf.setSOCKET_MESSAGE("REGEN");
                         } else {
                             dialogMessage = cmd;
-                            dialog = DialogScreen.getDialog(FightActivity.this, DialogScreen.DIALOG_PLAYER_PVP_UP, conf, dialogMessage);
+                            dialog = DialogScreen.getDialog(FightActivity.this, DialogScreen.DIALOG_PLAYER_PVP_UP_FIGHT, conf, dialogMessage);
                             dialog.show();
                         }
                         break;
 
                     case 12:   //сервер прислал уровень героя
                         app.setLVL((String) msg.obj);
-                        conf.setSOCKET_MESSAGE("TITLE"); //запрашиваю звание героя
+                        conf.setSOCKET_MESSAGE("PVP_LVL"); //запрашиваю звание героя
                         break;
 
                     case 13:   //сервер прислал звание героя
@@ -277,19 +277,28 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
 
                     case 19:   //сервер говорит текущее к-во ОЗ героя
                         app.setHP((String) msg.obj);
+                        if(Integer.parseInt(app.getHP()) > Integer.parseInt(app.getMAX_HP())){
+                            app.setHP(app.getMAX_HP());
+                        }
                         conf.setSOCKET_MESSAGE("MAX_MANA"); //запрашиваю к-во маны героя
                         break;
 
                     case 20:   //сервер мак. к-во мани героя
                         app.setMAX_MANA((String) msg.obj);
                         if (Integer.parseInt(app.getMAX_MANA()) == 0) {
+                            app.setIS_MANA("0");
                             app.setMAX_MANA("1");
+                        }else{
+                            app.setIS_MANA("1");
                         }
                         conf.setSOCKET_MESSAGE("MANA"); //запрашиваю к-во маны героя
                         break;
 
                     case 21:   //сервер говорит к-во маны героя
                         app.setMANA((String) msg.obj);
+                        if(Integer.parseInt(app.getMANA()) > Integer.parseInt(app.getMAX_MANA())){
+                            app.setMANA(app.getMAX_MANA());
+                        }
                         conf.setSOCKET_MESSAGE("MONEY"); //запрашиваю к-во монет героя
                         break;
 
@@ -300,7 +309,6 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
 
                     case 23:   //сервер говорит к-во голда игрока
                         app.setGOLD((String) msg.obj);
-                        conf.setSOCKET_MESSAGE("END"); //закрываю активити боя
                         startActivity(intent);
                         break;
 
@@ -329,7 +337,8 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
                             t.start();
                             pbConnect.setVisibility(View.VISIBLE);  //включаю прогрессБар
                         }else{
-                            СomentFight.setText("" + msg.obj);
+                            coment = СomentFight.getText().toString(); //сохраняю старый комент
+                            СomentFight.setText(cmd + "\n" + coment); //комент
                             txtHod(app.getNAME()); // Вывести что ход соперника
                             OpenBtnAtk(); // включить кнопки на атаку
                             pbConnect.setVisibility(View.GONE);
@@ -344,7 +353,10 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
                         dialog.show();
                         break;
 
-
+                    case 27:   //сервер прислал уровень героя
+                        app.setPVP_LVL((String) msg.obj);
+                        conf.setSOCKET_MESSAGE("TITLE"); //запрашиваю звание героя
+                        break;
                 }
             }
         };
@@ -476,7 +488,7 @@ public class FightActivity extends ActionBarActivity implements View.OnClickList
                 СomentFight.setText(nameAtk + " перв" + s4Atk + " настиг" + s3Atk + " " + nameDef);
                 break;
             case 3:
-                СomentFight.setText(nameDef + " был" + s1Def + " взят" + s1Atk + " врасплох");
+                СomentFight.setText(nameDef + " был" + s1Def + " взят" + s1Def + " врасплох");
                 break;
         }
     }

@@ -26,9 +26,10 @@ public class ChangeAvatar extends Thread {
     SocketConfig conf;
     Handler h;
 
-    public ChangeAvatar(Handler h1, SocketConfig conf) {  //главный
+    public ChangeAvatar(Handler h1, SocketConfig con) {  //главный
         this.h = h1;
-        this.conf = conf;
+        this.conf = con;
+        conf.setSOCKET_CONNECTED(false);
         start();
     }
 
@@ -91,7 +92,7 @@ public class ChangeAvatar extends Thread {
                     break;
                 } else {  //пришло сообщение от сервера
                     ////КОМАНДЫ КЛИЕНТА
-                    if (conf.getSOCKET_OUT() == "END" || cmd.equalsIgnoreCase("END")) {
+                    if (conf.getSOCKET_OUT() == "END") {
                         conf.setSOCKET_CONNECTED(false);
                         threadOUT.interrupt(); //закрываю второй поток
                         socket.close(); //закрываю сокет
